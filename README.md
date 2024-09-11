@@ -1,12 +1,12 @@
 # Aiera OpenAPI Specifications
-This repository contains OpenAPI specifications for Aiera's REST endpoint, designed to facilitate integration with function calling models on OpenAI.
+This repository contains OpenAPI specifications for Aiera's REST endpoint, designed to facilitate integration with function calling models using langchain's [OpenAPI toolkit](https://python.langchain.com/v0.1/docs/integrations/toolkits/openapi/).
 
 ## Overview
-Aiera provides a powerful REST API that allows developers to access financial data, earnings call transcripts, and other valuable information. This OpenAPI specification enables seamless integration with OpenAI's function calling models, enhancing the capabilities of AI-powered financial analysis tools.
+Aiera provides a powerful REST API that allows developers to access financial data, earnings call transcripts, and other valuable information. This OpenAPI specification enables seamless integration with the OpenAPI's function calling toolkit, enhancing the capabilities of AI-powered financial analysis tools.
 
 ## Key Features
 
-* OpenAI Function Calling Compatibility: Structured in a way that's optimized for use with OpenAI's function calling feature.
+* Toolkit Compatibility: Structured in a way that's optimized for use with function calling.
 * Easy Integration: Can be used with popular OpenAPI tools and code generators for quick implementation in various programming languages.
 
 ## Usage
