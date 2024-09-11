@@ -1,0 +1,10 @@
+# conda env create -f environment.yml
+name: aiera-rest-openapi
+dependencies:
+  - python>=3.10
+  - pip
+  - pip:
+    - openai
+    - langchain
+    - langchain-community
+    - langchain-openai

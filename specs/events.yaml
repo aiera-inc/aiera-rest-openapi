@@ -1,0 +1,265 @@
+openapi: 3.1.0
+info:
+  title: Aiera Events API
+  description: API for accessing events data from Aiera
+  version: 1.0.0
+servers:
+  - url: https://premium.aiera.com/api
+security:
+  - ApiKeyAuth: []
+paths:
+  /events/audio/transcript/csv:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getEventTranscripts
+      description: Retrieves a csv file of the event transcript.
+      summary: Retrieves a csv file of a event transcript.
+      parameters:
+        - name: event_ids
+          in: query
+          required: true
+          schema:
+            type: string
+          description: ID of the event.
+      responses:
+        "200":
+          description: Successfully uploaded the csv file.
+          content:
+            application/csv:
+              schema:
+                type: string
+                format: binary
+          headers:
+            content-disposition:
+              schema:
+                type: string
+                description: Used only with `application/pdf` responses
+                example: attachment; filename="name.pdf"
+            content-encoding:
+              schema:
+                type: string
+                description: Encoding of the file.
+  /events/{event_id}:
+    get:
+      operationId: getEvent
+      description: Retrieves an event using an event id.
+      summary: Retrieves a single event
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Returns event
+        - name: pricing
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+          description: Whether to return pricing information for the event.
+        - name: linguistics
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+          description: Whether to return summary of the event.
+      responses:
+        "200":
+          description: An event object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /events:
+    get:
+      operationId: getEvents
+      description: Retrieves a events that match the parameters provided.
+      summary: Retrieves a list of events that match the parameters provided.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: modified_since
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Returns events modified since this date
+        - name: bloomberg_ticker
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Filter events to 1+ bloomberg tickers always including country codes with colon (comma-separated).
+        - name: event_type
+          in: query
+          required: false
+          schema:
+            type: string
+            default: earnings
+          description: Event type, must be earnings
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Fetch events on or after this date (defaults to 2 weeks ago)
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Fetch events on or before this date (defaults to 2 weeks from now)
+      responses:
+        "200":
+          description: An array of event objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Event"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  schemas:
+    Event:
+      type: object
+      required:
+        - event_id
+      properties:
+        event_id:
+          type: integer
+        equity_id:
+          type: integer
+        company_id:
+          type: integer
+        ticker:
+          type: string
+        local_ticker:
+          type: string
+        bloomberg_ticker:
+          type: string
+        ric:
+          type: string
+        permid:
+          type: string
+        exchange_mic:
+          type: string
+        isin:
+          type: string
+        primary_equity:
+          type: boolean
+        title:
+          type: string
+        event_type:
+          type: string
+        event_date:
+          type: string
+        has_unknown_time:
+          type: boolean
+        connection_expected:
+          type: boolean
+        is_live:
+          type: boolean
+        fiscal_year:
+          type: integer
+          description: fiscal year of the event
+        fiscal_quarter:
+          type: integer
+          description: fiscal quarter of the event
+        broadcase_url:
+          type: string
+        replay_url:
+          type: string
+        press_url:
+          type: string
+        public_url:
+          type: string
+        transcription_status:
+          type: string
+        transcription_audio_url:
+          type: string
+        transcription_audio_offset_seconds:
+          type: integer
+        audio_stream_url:
+          type: string
+        has_transcripts:
+          type: boolean
+        has_pricing:
+          type: boolean
+        metrics:
+          type: object
+          properties:
+            sentiment:
+              type: number
+            rawSentiment:
+              type: number
+        grouping:
+          type: object
+          properties:
+            grouping_id:
+              type: integer
+            grouping_name:
+              type: string
+        status:
+          type: string
+        created:
+          type: string
+        modified:
+          type: string
+        linguistics:
+          type: object
+          properties:
+            summary:
+              description: Summary of the event
+              type: array
+              items:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  summary:
+                    type: array
+                    description: Summary segments of the event
+                    items:
+                      type: string
+            topics:
+              type: array
+              items:
+                type: object
+                properties:
+                  topic_id:
+                    type: integer
+                  topic:
+                    type: string
+                  priority:
+                    type: integer
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
