@@ -8,3 +8,4 @@ dependencies:
     - langchain
     - langchain-community
     - langchain-openai
+    - streamlit
