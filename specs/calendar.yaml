@@ -1,0 +1,315 @@
+openapi: 3.1.0
+info:
+  title: Aiera Calendars API
+  description: API for accessing calendar data from Aiera
+  version: 1.0.0
+servers:
+  - url: https://premium.aiera.com/api
+security:
+  - ApiKeyAuth: []
+paths:
+  /calendar:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getCalendar
+      summary: Retrieves a calendar object.
+      description: Fetch calendar events filtered by equity, watchlist, or other parameters.
+      parameters:
+        - name: modified_since
+          in: query
+          required: false
+          description: Returns events modified since this date.
+          schema:
+            type: string
+            format: date-time
+            example: "2024-10-31T23:59:59.999999"
+        - name: event_type
+          in: query
+          required: false
+          description: Filter by event type.
+          schema:
+            type: string
+            default: earnings
+        - name: start_date
+          in: query
+          description: >
+            Fetch events greater than or equal to this date 
+            (default: -2 weeks from query date).
+          schema:
+            type: string
+            format: date-time
+            required: "false"
+            example: "2024-10-31T23:59:59.999999"
+            pattern: '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}$'
+        - name: end_date
+          in: query
+          description: |
+            Fetch events less than or equal to this date (default: +2 weeks from query date).
+          schema:
+            type: string
+            required: "false"
+            format: date-time
+            example: "2024-10-31T23:59:59.999999"
+            pattern: '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}$'
+        - name: bloomberg_ticker
+          in: query
+          required: "false"
+          description: Filter events to Bloomberg tickers (comma-separated).
+          schema:
+            type: string
+        - name: isin
+          in: query
+          required: false
+          description: Filter events to ISINs (comma-separated).
+          schema:
+            type: string
+        - name: permid
+          in: query
+          required: false
+          description: Filter events to PermID identifiers (comma-separated).
+          schema:
+            type: string
+        - name: ric
+          in: query
+          required: false
+          description: Filter events to Reuters RICs (comma-separated).
+          schema:
+            type: string
+        - name: ticker
+          in: query
+          required: false
+          description: Filter events to local tickers (comma-separated).
+          schema:
+            type: string
+        - name: watchlist_id
+          in: query
+          required: false
+          description: Filter events to watchlist IDs (comma-separated).
+          schema:
+            type: integer
+        - name: company_rollup
+          in: query
+          required: false
+          description: Whether to roll up matches to the company entity.
+          schema:
+            type: boolean
+        - name: include_deleted
+          in: query
+          required: false
+          description: Whether to include deleted event records.
+          schema:
+            type: boolean
+        - name: include_private
+          in: query
+          required: false
+          description: Whether to include private events.
+          schema:
+            type: boolean
+        - name: from_index
+          in: query
+          required: false
+          description: Index to start returning results from.
+          schema:
+            type: integer
+        - name: size
+          in: query
+          required: false
+          description: Number of events to return, max 1000.
+          schema:
+            type: integer
+        - name: sort_key
+          in: query
+          required: false
+          description: Sort results by event_id_asc, event_id_desc, event_date_asc (default), or event_date_desc.
+          schema:
+            type: string
+      
+      responses:
+        "200":
+          description: A calendar object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Calendar"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /calendar/coverage:
+    get:
+      summary: Get Equities Coverage
+      description: Retrieve information about equities covered by the API.
+      operationId: getCalendarCoverage
+      parameters:
+        - name: bloomberg_ticker
+          in: query
+          description: Bloomberg formatted ticker filter.
+          required: false
+          schema:
+            type: string
+        - name: isin
+          in: query
+          description: ISIN filter.
+          required: false
+          schema:
+            type: string
+        - name: cusip
+          in: query
+          description: CUSIP filter.
+          required: false
+          schema:
+            type: string
+        - name: ric
+          in: query
+          description: Reuters/Refinitiv RIC filter.
+          required: false
+          schema:
+            type: string
+        - name: ticker
+          in: query
+          description: Ticker filter.
+          required: false
+          schema:
+            type: string
+        - name: permid
+          in: query
+          description: PermID filter.
+          required: false
+          schema:
+            type: string
+        - name: watchlist_id
+          in: query
+          description: Watchlist ID filter.
+          required: false
+          schema:
+            type: integer
+        - name: company_rollup
+          in: query
+          description: Rollup to all company equities.
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Equities coverage details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  counts:
+                    type: object
+                  results:
+                    type: object
+  /calendar/{event_id}:
+    get:
+      summary: Get Calendar Event by ID
+      operationId: getCalendarById
+      description: Retrieve details of a specific calendar event by its ID.
+      parameters:
+        - name: event_id
+          in: path
+          description: The unique identifier of the event.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Calendar event details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventDetails"
+    
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  schemas:
+    Calendar:
+      type: object
+      properties:
+        params:
+          type: object
+        count:
+          type: integer
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/Event"
+    Event:
+      type: object
+      properties:
+        event_id:
+          type: integer
+        event_title:
+          type: string
+        event_type:
+          type: string
+        event_date:
+          type: string
+          format: date-time
+          example: "2024-10-31T23:59:59.999999"
+          pattern: '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}$'
+        equity:
+          type: object
+          properties:
+            equity_id:
+              type: integer
+            local_ticker:
+              type: string
+            bloomberg_ticker:
+              type: string
+            ric:
+              type: string
+            permid:
+              type: string
+            isin:
+              type: string
+            exchange_mic:
+              type: string
+    EventDetails:
+      type: object
+      properties:
+        event_id:
+          type: integer
+        event_title:
+          type: string
+        event_type:
+          type: string
+        event_date:
+          type: string
+          format: date-time
+        equity:
+          $ref: "#/components/schemas/Event"
+        broadcast_url:
+          type: string
+        replay_url:
+          type: string
+        conference_number:
+          type: string
+        conference_pin:
+          type: string
+        slides_url:
+          type: string
+        press_url:
+          type: string
+        transcription_audio_url:
+          type: string
+    
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
