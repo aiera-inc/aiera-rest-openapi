@@ -1,0 +1,543 @@
+openapi: 3.1.0
+info:
+  title: Aiera Corporate Activity API
+  description: API for accessing corporate activity data from Aiera
+  version: 1.0.0
+servers:
+  - url: https://premium.aiera.com/api
+security:
+  - ApiKeyAuth: []
+paths:
+  # /corporate-activity:
+  #   get:
+  #     security:
+  #       - ApiKeyAuth: []
+  #     operationId: getCorporateActivity
+  #     summary: Retrieve corporate activities.
+  #     description: Fetch corporate activity data based on various filters.
+  #     parameters:
+  #       - name: start_date
+  #         in: query
+  #         required: false
+  #         description: Filter activities starting from this date.
+  #         schema:
+  #           type: string
+  #           format: date-time
+  #       - name: end_date
+  #         in: query
+  #         required: false
+  #         description: Filter activities up to this date.
+  #         schema:
+  #           type: string
+  #           format: date-time
+  #       - name: modified_since
+  #         in: query
+  #         required: false
+  #         description: Return activities modified since this date.
+  #         schema:
+  #           type: string
+  #           format: date-time
+  #       - name: activity_type
+  #         in: query
+  #         required: false
+  #         description: Filter by activity type (e.g., earnings, presentation).
+  #         schema:
+  #           type: string
+  #       - name: activity_subtype
+  #         in: query
+  #         required: false
+  #         description: Filter by activity subtype.
+  #         schema:
+  #           type: string
+  #       - name: bloomberg_ticker
+  #         in: query
+  #         required: false
+  #         description: Filter activities by Bloomberg ticker.
+  #         schema:
+  #           type: string
+  #       - name: size
+  #         in: query
+  #         required: false
+  #         description: Number of records to return, max 1000.
+  #         schema:
+  #           type: integer
+  #       - name: from_index
+  #         in: query
+  #         required: false
+  #         description: Index to start returning results from.
+  #         schema:
+  #           type: integer
+  #     responses:
+  #       "200":
+  #         description: A list of corporate activities
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/CorporateActivities"
+  #       default:
+  #         description: Unexpected error
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/Error"
+
+  # /corporate-activity/coverage:
+  #   get:
+  #     security:
+  #       - ApiKeyAuth: []
+  #     operationId: getCorporateActivityCoverage
+  #     summary: Retrieve equities coverage.
+  #     description: Retrieve details of equities covered by the corporate activity API.
+  #     parameters:
+  #       - name: bloomberg_ticker
+  #         in: query
+  #         required: false
+  #         description: Filter by Bloomberg ticker.
+  #         schema:
+  #           type: string
+  #       - name: isin
+  #         in: query
+  #         required: false
+  #         description: Filter by ISIN.
+  #         schema:
+  #           type: string
+  #       - name: company_rollup
+  #         in: query
+  #         required: false
+  #         description: Roll up results to the company level.
+  #         schema:
+  #           type: boolean
+  #     responses:
+  #       "200":
+  #         description: Details of covered equities.
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/EquitiesCoverage"
+  #       default:
+  #         description: Unexpected error
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/Error"
+
+  /corporate-activity/{corporate_activity_id}:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getCorporateActivityById
+      summary: Retrieve corporate activity by ID.
+      description: Fetch details of a specific corporate activity by its ID.
+      parameters:
+        - name: corporate_activity_id
+          in: path
+          required: true
+          description: The unique identifier of the corporate activity.
+          schema:
+            type: string
+        - name: include_details
+          in: query
+          required: false
+          description: Include detailed information about the corporate activity.
+          schema:
+            type: boolean
+            default: true
+      responses:
+        "200":
+          description: Corporate activity details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorporateActivityDetails"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # /corporate-activity/audits:
+  #   get:
+  #     security:
+  #       - ApiKeyAuth: []
+  #     operationId: getCorporateActivityAudits
+  #     summary: Retrieve corporate activity audits.
+  #     description: Fetch audit logs for corporate activities.
+  #     parameters:
+  #       - name: start_date
+  #         in: query
+  #         required: false
+  #         description: Filter audits starting from this date.
+  #         schema:
+  #           type: string
+  #           format: date-time
+  #       - name: end_date
+  #         in: query
+  #         required: false
+  #         description: Filter audits up to this date.
+  #         schema:
+  #           type: string
+  #           format: date-time
+  #       - name: modified_since
+  #         in: query
+  #         required: false
+  #         description: Return audits modified since this date.
+  #         schema:
+  #           type: string
+  #           format: date-time
+  #       - name: activity_type
+  #         in: query
+  #         required: false
+  #         description: Filter by activity type.
+  #         schema:
+  #           type: string
+  #       - name: size
+  #         in: query
+  #         required: false
+  #         description: Number of records to return, max 1000.
+  #         schema:
+  #           type: integer
+  #       - name: from_index
+  #         in: query
+  #         required: false
+  #         description: Index to start returning results from.
+  #         schema:
+  #           type: integer
+  #     responses:
+  #       "200":
+  #         description: A list of corporate activity audits.
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/CorporateActivityAudits"
+  #       default:
+  #         description: Unexpected error
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/Error"
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  schemas:
+    # CorporateActivities:
+    #   type: object
+    #   properties:
+    #     params:
+    #       type: object
+    #     count:
+    #       type: integer
+    #     activities:
+    #       type: array
+    #       items:
+    #         $ref: "#/components/schemas/CorporateActivity"
+    # CorporateActivity:
+    #   type: object
+    #   properties:
+    #     id:
+    #       type: string
+    #     title:
+    #       type: string
+    #     type:
+    #       type: string
+    #     date:
+    #       type: string
+    #       format: date-time
+    
+    CorporateActivityDetails:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        subtype:
+          type: string
+        when:
+          type: string
+          format: date-time
+        date_is_exact:
+          type: boolean
+        is_tentative:
+          type: boolean
+        is_estimated:
+          type: boolean
+        is_postponed:
+          type: boolean
+        is_cancelled:
+          type: boolean
+        raw_identifiers:
+          type: object
+          properties:
+            isin:
+              type: string
+            cusip:
+              type: string
+            comapny_name:
+              type: string
+            delisted:
+              type: boolean
+        event:
+          $ref: "#/components/schemas/Event"
+        equity:
+          $ref: "#/components/schemas/Equity"
+        related_ids:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+          properties:
+            contact:
+              "#/components/schemas/ContactDetails"
+            speakers:
+              type: String
+            webcasts:
+              type: array
+              items:
+                type: object
+                properties:
+                  url:
+                    type: string
+                  description::
+                    type: string
+            regarding:
+              type: string
+            callDetails:
+              type: object
+              properties:
+                dialInNumber:
+                  type: string
+            localLanguage:
+              type: boolean
+            replayDetails:
+              type: object
+              properties:
+                date:
+                  type: string
+                  format: date-time
+                timeZone:
+                  type: string
+                dialInEnds:
+                  type: string
+                  format: date-time
+                webcastUrl:
+                  type: string
+            preRegistration:
+              type: boolean
+            preRegistrationUrl:
+              type: string
+        explaination:
+          type: string
+        audit:
+          type: array
+          items:
+            change_date:
+              type: string
+              format: date-time
+            change_type:  
+              type: string
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+
+    ContactDetails:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        telephone:
+          type: string
+
+    Event:
+      type: object
+      properties:
+        event_id:
+          type: integer
+        event_title:
+          type: string
+        event_type: 
+          type: string
+        event_date:
+          type: string
+          format: date-time
+        has_unknown_time:
+          type: boolean
+        broadcase_url:
+          type: string
+        replay_url:     
+          type: string  
+        conference_number:
+          type: string
+        conference_pin:
+          type: string
+        slides_url:
+          type: string
+        slides_url_type:
+          type: string
+        press_url:
+          type: string
+        press_url_type:
+          type: string
+        transcription_status:
+          type: string
+        transcription_audio_url:
+          type: string
+        status:
+          type: string
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+
+    Equity:
+      type: object
+      properties:
+        equity_id:
+          type: integer
+        company_id:
+          type: integer
+        comapny_name:
+          type: string
+        local_ticker:
+          type: string
+        bloomberg_ticker:
+          type: string
+        ric:
+          type: string
+        permid:
+          type: string
+        isin:
+          type: string
+        cusip:
+          type: string
+        exchange_mic:
+          type: string
+
+    # EquitiesCoverage:
+    #   type: object
+    #   properties:
+    #     counts:
+    #       type: object
+    #       properties:
+    #         mapped:
+    #           type: object
+    #           properties:
+    #             companies:
+    #               type: integer
+    #             equities:
+    #               type: integer
+    #             gics_sectors:
+    #               type: object
+    #               additionalProperties:
+    #                 type: integer
+    #             gics_subsectors:
+    #               type: object
+    #               additionalProperties:
+    #                 type: integer
+    #             countries:
+    #               type: object
+    #               additionalProperties:
+    #                 type: integer
+    #             regions:
+    #               type: object
+    #               additionalProperties:
+    #                 type: integer
+    #             subregions:
+    #               type: object
+    #               additionalProperties:
+    #                 type: integer
+    #         unmapped:
+    #           type: object
+    #           properties:
+    #             listed:
+    #               type: integer
+    #             delisted:
+    #               type: integer
+    #     results:
+    #       type: object
+    #       properties:
+    #         mapped:
+    #           type: array
+    #           items:
+    #             type: object
+    #             properties:
+    #               company_id:
+    #                 type: integer
+    #               name:
+    #                 type: string
+    #               country:
+    #                 type: string
+    #               region:
+    #                 type: string
+    #               subregion:
+    #                 type: string
+    #               equities:
+    #                 type: array
+    #                 items:
+    #                   type: object
+    #                   properties:
+    #                     equity_id:
+    #                       type: integer
+    #                     bloomberg_ticker:
+    #                       type: string
+    #                     local_ticker:
+    #                       type: string
+    #                     ric:
+    #                       type: string
+    #                     isin:
+    #                       type: string
+    #                     cusip:
+    #                       type: string
+    #                     permid:
+    #                       type: string
+    #                     mic:
+    #                       type: string
+    #                     gics_sector:
+    #                       type: string
+    #                     gics_subsector:
+    #                       type: string
+    #         unmapped:
+    #           type: array
+    #           items:
+    #             type: object
+    # CorporateActivityAudits:
+    #   type: object
+    #   properties:
+    #     params:
+    #       type: object
+    #     count:
+    #       type: integer
+    #     audits:
+    #       type: array
+    #       items:
+    #         type: object
+    #         properties:
+    #           activity_id:
+    #             type: string
+    #           change_date:
+    #             type: string
+    #             format: date-time
+    #           change_type:
+    #             type: string
+    
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
