@@ -1,4 +1,5 @@
 openapi: 3.1.0
+
 info:
   title: Aiera Corporate Activity API
   description: API for accessing corporate activity data from Aiera
@@ -8,78 +9,80 @@ servers:
 security:
   - ApiKeyAuth: []
 paths:
-  # /corporate-activity:
-  #   get:
-  #     security:
-  #       - ApiKeyAuth: []
-  #     operationId: getCorporateActivity
-  #     summary: Retrieve corporate activities.
-  #     description: Fetch corporate activity data based on various filters.
-  #     parameters:
-  #       - name: start_date
-  #         in: query
-  #         required: false
-  #         description: Filter activities starting from this date.
-  #         schema:
-  #           type: string
-  #           format: date-time
-  #       - name: end_date
-  #         in: query
-  #         required: false
-  #         description: Filter activities up to this date.
-  #         schema:
-  #           type: string
-  #           format: date-time
-  #       - name: modified_since
-  #         in: query
-  #         required: false
-  #         description: Return activities modified since this date.
-  #         schema:
-  #           type: string
-  #           format: date-time
-  #       - name: activity_type
-  #         in: query
-  #         required: false
-  #         description: Filter by activity type (e.g., earnings, presentation).
-  #         schema:
-  #           type: string
-  #       - name: activity_subtype
-  #         in: query
-  #         required: false
-  #         description: Filter by activity subtype.
-  #         schema:
-  #           type: string
-  #       - name: bloomberg_ticker
-  #         in: query
-  #         required: false
-  #         description: Filter activities by Bloomberg ticker.
-  #         schema:
-  #           type: string
-  #       - name: size
-  #         in: query
-  #         required: false
-  #         description: Number of records to return, max 1000.
-  #         schema:
-  #           type: integer
-  #       - name: from_index
-  #         in: query
-  #         required: false
-  #         description: Index to start returning results from.
-  #         schema:
-  #           type: integer
-  #     responses:
-  #       "200":
-  #         description: A list of corporate activities
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: "#/components/schemas/CorporateActivities"
-  #       default:
-  #         description: Unexpected error
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: "#/components/schemas/Error"
+  /corporate-activity:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getCorporateActivity
+      summary: Retrieve corporate activities.
+      description: Fetch corporate activity data based on various filters.
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          description: Filter activities starting from this date.
+          schema:
+            type: string
+            format: date-time
+            default: datetime.date.today() - datetime.timedelta(days=28)
+        - name: end_date
+          in: query
+          required: true
+          description: Filter activities up to this date.
+          schema:
+            type: string
+            format: date-time
+            default: datetime.date.today() + datetime.timedelta(days=28)
+        - name: modified_since
+          in: query
+          required: false
+          description: Return activities modified since this date.
+          schema:
+            type: string
+            format: date-time
+        - name: activity_type
+          in: query
+          required: false
+          description: Filter by activity type (e.g., earnings, presentation).
+          schema:
+            type: string
+        - name: activity_subtype
+          in: query
+          required: false
+          description: Filter by activity subtype.
+          schema:
+            type: string
+        - name: bloomberg_ticker
+          in: query
+          required: true
+          description: Filter activities by Bloomberg ticker.
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          description: Number of records to return, max 1000.
+          schema:
+            type: integer
+        - name: from_index
+          in: query
+          required: false
+          description: Index to start returning results from.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: A list of corporate activities
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorporateActivities"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
   /corporate-activity/coverage:
     get:
@@ -284,29 +287,19 @@ components:
       in: header
       name: X-API-KEY
   schemas:
-    # CorporateActivities:
-    #   type: object
-    #   properties:
-    #     params:
-    #       type: object
-    #     count:
-    #       type: integer
-    #     activities:
-    #       type: array
-    #       items:
-    #         $ref: "#/components/schemas/CorporateActivity"
-    # CorporateActivity:
-    #   type: object
-    #   properties:
-    #     id:
-    #       type: string
-    #     title:
-    #       type: string
-    #     type:
-    #       type: string
-    #     date:
-    #       type: string
-    #       format: date-time
+    CorporateActivities:
+      type: object
+      properties:
+        params:
+          type: object
+        count:
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CorporateActivityDetails"
+
+
     CorporateCoverage:
       type: object
       properties:
