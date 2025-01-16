@@ -36,25 +36,23 @@ paths:
           description: >
             Fetch events greater than or equal to this date 
             (default: -2 weeks from query date).
+          required: true
           schema:
             type: string
             format: date-time
-            required: "false"
-            example: "2024-10-31T23:59:59.999999"
-            pattern: '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}$'
+            default: date.today() - timedelta(weeks=2)
         - name: end_date
           in: query
           description: |
             Fetch events less than or equal to this date (default: +2 weeks from query date).
+          required: true
           schema:
             type: string
-            required: "false"
             format: date-time
-            example: "2024-10-31T23:59:59.999999"
-            pattern: '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}$'
+            default: date.today() + timedelta(weeks=2)
         - name: bloomberg_ticker
           in: query
-          required: "false"
+          required: true
           description: Filter events to Bloomberg tickers (comma-separated).
           schema:
             type: string
