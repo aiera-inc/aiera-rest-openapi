@@ -28,6 +28,7 @@ def create_openapi_agent():
         requests_wrapper,
         llm,
         allow_dangerous_requests=True,
+        handle_parsing_errors=True,
     )
     return agent
 
