@@ -1,0 +1,75 @@
+openapi: 3.1.0
+info:
+  title: Aiera Events API
+  description: API for accessing events data from Aiera
+  version: 1.0.0
+servers:
+  - url: https://premium.aiera.com/api
+security:
+  - ApiKeyAuth: []
+paths:
+  /equities-v2/sectors:
+    get:
+      operationId: get sectors and sub-sectors
+      description: Retrieves sectors and subsectors
+      summary: Retrieves a list of sectors alonsg with their subsectors.
+      security:
+        - ApiKeyAuth: [] 
+      responses:
+        "200":
+          description: An array of sector objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Sector"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  schemas:
+    Sector:
+      type: object
+      properties:
+        sector_id:
+          type: integer
+        gics_code:
+          type: string
+        name:
+          type: string
+        subsectors:
+          type: array
+          items:
+            type: object
+            properties:
+              subsector_id:
+                type: integer
+              gics_code:
+                type: string
+              gics_industry_code: 
+                type: string
+              name:
+                type: string
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
