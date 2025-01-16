@@ -1,0 +1,43 @@
+openapi: 3.1.0
+info:
+  title: Aiera Events API
+  description: API for accessing events data from Aiera
+  version: 1.0.0
+servers:
+  - url: https://premium.aiera.com/api
+security:
+  - ApiKeyAuth: []
+paths:
+  /transcrippet:
+    get:
+        security:
+          - ApiKeyAuth: []
+        operationId: getEventTranscripts
+        description: Retrieves a csv file of the event transcript.
+        summary: Retrieves a csv file of a event transcript.
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  schemas:
+    Transcrippet:
+      type: object
+      properties:
+        event_id:
+          type: string
+        event_type:
+          type: string
+        event_date:
+          type: string
+          format: date-time
+        event_title:
+          type: string
+        event_description:
+          type: string
+        event_transcript:
+          type: string
+        event_transcript_url:
+          type: string
