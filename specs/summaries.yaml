@@ -120,6 +120,39 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+    
+  /summaries/{event_id}/{event_type}:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getEventSummaryByType
+      description: Retrieves a summary based on the event_id and event_type.
+      summary: Retrieves a summary for the event with event id and event type.
+      parameters:
+        - name: event_type
+          in: path
+          required: true
+          schema:
+            type: string      
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: An event object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetEventSummary"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
 components:
   securitySchemes:
@@ -127,12 +160,13 @@ components:
       type: apiKey
       in: header
       name: X-API-KEY
+
   schemas:
+
     GetEventSummary:
     type: array
     items:
       $ref: "#/components/schemas/Summaries"
-
 
     Summaries:
       type: object 
