@@ -19,7 +19,7 @@ def create_openapi_agent():
 
     llm = ChatOpenAI(model_name="gpt-4o", temperature=0.3)
 
-    with open("specs/events.yaml", "r") as file:
+    with open("specs/summaries.yaml", "r") as file:
         raw_events_api_spec = yaml.safe_load(file)
 
     events_api_spec = reduce_openapi_spec(raw_events_api_spec)
