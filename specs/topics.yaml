@@ -1,0 +1,115 @@
+openapi: 3.1.0
+info:
+  title: Aiera Events API
+  description: API for accessing events data from Aiera
+  version: 1.0.0
+servers:
+  - url: https://premium.aiera.com/api
+security:
+  - ApiKeyAuth: []
+paths:
+  # /events/{event_id}:
+  #   get:
+  #     operationId: getEvent
+  #     description: Retrieves an event using an event id.
+  #     summary: Retrieves a single event
+  #     parameters:
+  #       - name: event_id
+  #         in: path
+  #         required: true
+  #         schema:
+  #           type: string
+  #         description: Returns event
+  #       - name: pricing
+  #         in: query
+  #         required: false
+  #         schema:
+  #           type: boolean
+  #           default: true
+  #         description: Whether to return pricing information for the event.
+  #       - name: linguistics
+  #         in: query
+  #         required: false
+  #         schema:
+  #           type: boolean
+  #           default: true
+  #         description: Whether to return summary of the event.
+  #     responses:
+  #       "200":
+  #         description: An event object
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/Event"
+  #       default:
+  #         description: unexpected error
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/Error"
+
+  /topics:
+    get:
+      operationId: getTopics
+      description: Retrieves list of topics
+      summary: Retrieves a list of topics that match the parameters provided.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: search
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: An array of event objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Topics"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  schemas:
+    Topics:
+      type: object
+      properties:
+        topic_id:
+          type: string
+        topic_name:
+          type: string
+        
+              
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
