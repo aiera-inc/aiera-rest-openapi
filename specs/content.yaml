@@ -1,0 +1,156 @@
+openapi: 3.1.0
+info:
+  title: Aiera Events API
+  description: API for accessing events data from Aiera
+  version: 1.0.0
+servers:
+  - url: https://premium.aiera.com/api
+security:
+  - ApiKeyAuth: []
+paths:
+  /content/filings:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getFilings
+      description: Retrieves filings content.
+      summary: Retrieves filings content by equity.
+      parameters:
+        - name: form_number
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Form number to filter filings content by.
+        - name: start_date
+          in: query
+          required: true
+          description: Filter activities starting from this date.
+          schema:
+            type: string
+            format: date-time
+            default: datetime.date.today() - datetime.timedelta(days=28)
+        - name: end_date
+          in: query
+          required: true
+          description: Filter activities up to this date.
+          schema:
+            type: string
+            format: date-time
+            default: datetime.date.today() + datetime.timedelta(days=28)
+        - name: bloomberg_ticker
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Bloomberg ticker to filter filings content by.
+        - name: isin
+          in: query
+          required: false
+          schema:
+            type: string
+          description: ISIN to filter filings content by.
+        - name: ric
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Reuters/Refinitiv RIC to filter filings content by.
+        - name: permid
+          in: query
+          required: false
+          schema:
+            type: string
+          description: PermID to filter filings content by.
+        - name: ticker
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Ticker symbol to filter filings content by.
+        - name: from_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Return items with an ID greater than this.
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+          description: Starting index for pagination.
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 100
+            maximum: 100
+          description: Number of items to return (maximum 100).
+      responses:
+        "200":
+          description: Successfully retrieved filings content.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Filings"
+        default:
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  schemas:
+    Filings:
+      type: object
+      properties:
+        content_id:
+          type: integer
+        title:
+          type: string
+        published_date:
+          type: string
+          format: date-time
+        form_number:
+          type: string
+        filing_organization:
+          type: string
+        is_amendment:
+          type: boolean
+        period_end_date:
+          type: string
+          format: date-time
+        release_date:
+          type: string
+          format: date-time
+        arrival_date:
+          type: string
+          format: date-time
+        pulled_date:
+          type: string
+          format: date-time
+        pdf_url:
+          type: string
+        url:
+          type: string
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
