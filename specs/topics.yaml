@@ -78,6 +78,47 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+
+  /topics/from_equities:
+    get:
+      operationId: getTopics&Equities
+      description: Retrieves list of topics and equities
+      summary: Retrieves a list of topics and equities that match the parameters provided.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: search
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: An array of event objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EquityTopics"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -92,7 +133,16 @@ components:
           type: string
         topic_name:
           type: string
-        
+
+    EquityTopics:
+      type: object
+      properties:
+        topic_id:
+          type: string
+        topic_name:
+          type: string
+        equity_count:
+          type: integer        
               
     Error:
       type: object
