@@ -128,7 +128,42 @@ paths:
                 schema:
                   $ref: "#/components/schemas/Error"
 
-
+  /equities-v2/{equity_id}:
+    get:
+      operationId: get equity info by equity id
+      description: Retrieves equities by equity id
+      summary: Retrieves the appropriate equity by equity id.
+      security:
+        - ApiKeyAuth: [] 
+      parameters:
+        - name: equity_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the equity.
+        - name: include_company_metadata=true
+          in: query
+          schema:
+            type: boolean
+            default: true
+          description: Whether to include associated company metadata.
+      responses:
+        "200":
+          description: An array of equity objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Equity"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+ 
 
 components:
   securitySchemes:
