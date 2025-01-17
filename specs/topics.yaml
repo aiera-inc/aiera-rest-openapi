@@ -200,6 +200,47 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
+  /topics/{topic_id}/events:
+    get:
+      operationId: getEvents
+      description: Retrieves list of events for a topic by topic_id
+      summary: Retrieves a list of events that match the parameters provided.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: topic_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Returns events for a topic
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: An array of event objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EventsByTopicId"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -253,6 +294,38 @@ components:
           type: string
         gics_sub_sector:
           type: string
+
+    EventsByTopicId:
+      type: object
+      properties:
+        event_id:
+          type: integer
+        title:
+          type: string
+        event_type:
+          type: string
+        date:
+          type: string
+          format: date-time
+          example: "2024-10-31T23:59:59.999999"
+          pattern: '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}$'
+        equity:
+          type: object
+          properties:
+            equity_id:
+              type: integer
+            local_ticker:
+              type: string
+            bloomberg_ticker:
+              type: string
+            mic:
+              type: string
+            isin:
+              type: string
+            gics_sector:
+              type: string
+            gics_sub_sector:
+              type: string
 
     Error:
       type: object
