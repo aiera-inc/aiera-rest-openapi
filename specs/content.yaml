@@ -104,6 +104,104 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+
+  /content/news:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getNews
+      description: Retrieves news content.
+      summary: Retrieves news content by equity.
+      parameters:
+        - name: news_source_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Return items with an ID greater than this.
+        - name: start_date
+          in: query
+          required: true
+          description: Filter activities starting from this date.
+          schema:
+            type: string
+            format: date-time
+        - name: end_date
+          in: query
+          required: true
+          description: Filter activities up to this date.
+          schema:
+            type: string
+            format: date-time
+        - name: bloomberg_ticker
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Bloomberg ticker to filter news content by.
+        - name: isin
+          in: query
+          required: false
+          schema:
+            type: string
+          description: ISIN to filter news content by.
+        - name: ric
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Reuters/Refinitiv RIC to filter news content by.
+        - name: permid
+          in: query
+          required: false
+          schema:
+            type: string
+          description: PermID to filter news content by.
+        - name: ticker
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Ticker symbol to filter news content by.
+        - name: from_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Return items with an ID greater than this.
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+          description: Starting index for pagination.
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 100
+            maximum: 100
+          description: Number of items to return (maximum 100).
+      responses:
+        "200":
+          description: Successfully retrieved news content.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/News"
+        default:
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+        
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -143,6 +241,22 @@ components:
           type: string
         url:
           type: string
+    News: 
+      type: object
+      properties:
+        content_id:
+          type: integer
+        title:
+          type: string
+        news_source_id:
+          type: integer
+        news_source:
+          type: string
+        published_date:
+          type: string
+          format: date-time
+        url:
+          type: string
     Error:
       type: object
       required:
@@ -154,3 +268,4 @@ components:
           format: int32
         message:
           type: string
+
