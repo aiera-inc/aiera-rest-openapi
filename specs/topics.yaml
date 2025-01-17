@@ -119,6 +119,46 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
+  /topics/from_events:
+    get:
+      operationId: getTopics&EventCount
+      description: Retrieves list of topics and events count
+      summary: Retrieves a list of topics and event counts that match the parameters provided.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: search
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: An array of event objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EventTopics"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -143,7 +183,18 @@ components:
           type: string
         equity_count:
           type: integer        
-              
+
+    EventTopics:
+      type: object
+      properties:
+        topic_id:
+          type: string
+        topic_name:
+          type: string
+        event_count:
+          type: integer        
+
+
     Error:
       type: object
       required:
