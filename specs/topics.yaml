@@ -8,45 +8,37 @@ servers:
 security:
   - ApiKeyAuth: []
 paths:
-  # /events/{event_id}:
-  #   get:
-  #     operationId: getEvent
-  #     description: Retrieves an event using an event id.
-  #     summary: Retrieves a single event
-  #     parameters:
-  #       - name: event_id
-  #         in: path
-  #         required: true
-  #         schema:
-  #           type: string
-  #         description: Returns event
-  #       - name: pricing
-  #         in: query
-  #         required: false
-  #         schema:
-  #           type: boolean
-  #           default: true
-  #         description: Whether to return pricing information for the event.
-  #       - name: linguistics
-  #         in: query
-  #         required: false
-  #         schema:
-  #           type: boolean
-  #           default: true
-  #         description: Whether to return summary of the event.
-  #     responses:
-  #       "200":
-  #         description: An event object
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: "#/components/schemas/Event"
-  #       default:
-  #         description: unexpected error
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: "#/components/schemas/Error"
+  /topics/{topic_id:}:
+    get:
+      operationId: getEvent
+      description: Retrieves an event using an event id.
+      summary: Retrieves a single event
+      parameters:
+        - name: topic_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Returns topic
+        - name: include_metrics
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+      responses:
+        "200":
+          description: An event object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Topics"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
   /topics:
     get:
