@@ -274,6 +274,12 @@ components:
     EventDetails:
       type: object
       properties:
+        modified:
+          type: string
+          format: date-time
+        created:
+          Type: string
+          format: date-time
         event_id:
           type: integer
         event_title:
