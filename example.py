@@ -6,7 +6,6 @@ import os
 from langchain_community.utilities.requests import RequestsWrapper
 from langchain_community.agent_toolkits.openapi.spec import reduce_openapi_spec
 from langchain.callbacks.tracers import ConsoleCallbackHandler
-
 # Construct authentication headers
 def construct_aiera_auth_headers():
     return {"X-API-Key": os.environ["AIERA_API_KEY"]}
