@@ -1,3 +1,5 @@
+import re
+import langchain
 import streamlit as st
 from langchain_community.agent_toolkits.openapi import planner
 from langchain_openai import ChatOpenAI
@@ -6,7 +8,6 @@ import os
 from langchain_community.utilities.requests import RequestsWrapper
 from langchain_community.agent_toolkits.openapi.spec import reduce_openapi_spec
 from langchain.callbacks.tracers import ConsoleCallbackHandler
-import re
 
 # Construct authentication headers
 def construct_aiera_auth_headers():
@@ -36,6 +37,7 @@ def create_openapi_agent():
 def get_chat_response(query):
     agent = create_openapi_agent()
     response = agent.invoke(query, config={'callbacks': [ConsoleCallbackHandler()]})
+    print("THIS IS THE RESPONSE:::::", response)
     return response
 
 # Set up Streamlit page
