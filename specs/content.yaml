@@ -14,7 +14,7 @@ paths:
         - ApiKeyAuth: []
       operationId: getFilings
       description: Retrieves filings content.
-      summary: Retrieves filings content by equity.
+      summary: Retrieves filings content according to parameters.
       parameters:
         - name: form_number
           in: query
@@ -121,21 +121,21 @@ paths:
           description: Return items with an ID greater than this.
         - name: start_date
           in: query
-          required: true
+          required: false
           description: Filter activities starting from this date.
           schema:
             type: string
             format: date-time
         - name: end_date
           in: query
-          required: true
+          required: false
           description: Filter activities up to this date.
           schema:
             type: string
             format: date-time
         - name: bloomberg_ticker
           in: query
-          required: true
+          required: false
           schema:
             type: string
           description: Bloomberg ticker to filter news content by.
