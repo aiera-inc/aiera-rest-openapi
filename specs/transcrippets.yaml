@@ -16,7 +16,7 @@ paths:
         description: Retrieves a transcrippet url.
         summary: Retrieves a transcrippet url according to the parameters.
         parameters:
-          - name: transrippet_id
+          - name: transcrippet_id
             in: query
             required: false
             schema:
