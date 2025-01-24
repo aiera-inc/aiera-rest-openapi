@@ -13,7 +13,9 @@ paths:
       security:
         - ApiKeyAuth: []
       operationId: getFilings
-      description: Retrieves filings content.
+      description:  Retrieves filings content for specific equities or filters such as form number, date range, or ticker symbol.
+        You can provide a `bloomberg_ticker` (e.g., "AMZN:US"), `start_date`, `end_date` to filter filings within
+        a specific date range for a specific equity.
       summary: Retrieves filings content according to parameters.
       parameters:
         - name: form_number
@@ -25,19 +27,17 @@ paths:
         - name: start_date
           in: query
           required: true
-          description: Filter activities starting from this date.
           schema:
             type: string
             format: date-time
-            default: datetime.date.today() - datetime.timedelta(days=28)
+          description: Fetch events on or after this date (defaults to 2 weeks ago) (YYYY-MM-DD)
         - name: end_date
           in: query
           required: true
-          description: Filter activities up to this date.
           schema:
             type: string
             format: date-time
-            default: datetime.date.today() + datetime.timedelta(days=28)
+          description: Fetch events on or before this date (defaults to 2 weeks later) (YYYY-MM-DD)
         - name: bloomberg_ticker
           in: query
           required: true
@@ -110,32 +110,35 @@ paths:
       security:
         - ApiKeyAuth: []
       operationId: getNews
-      description: Retrieves news content.
+      description: Retrieves news content for specific equities or filters such as form number, date range, or ticker symbol.
+        You can provide a `bloomberg_ticker` (e.g., "AMZN:US"), `start_date`,  `end_date` and `news_source_id` to filter news within
+        a specific date range for a specific equity.
       summary: Retrieves news content by equity.
       parameters:
         - name: news_source_id
           in: query
-          required: false
+          required: true
           schema:
             type: integer
+            default: ALL
           description: Return items with an ID greater than this.
         - name: start_date
           in: query
-          required: false
+          required: true
           description: Filter activities starting from this date.
           schema:
             type: string
             format: date-time
         - name: end_date
           in: query
-          required: false
+          required: true
           description: Filter activities up to this date.
           schema:
             type: string
             format: date-time
         - name: bloomberg_ticker
           in: query
-          required: false
+          required: true
           schema:
             type: string
           description: Bloomberg ticker to filter news content by.
