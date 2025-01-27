@@ -8,7 +8,6 @@ servers:
 security:
   - ApiKeyAuth: []
 paths:
-
   /events-v2/person/{person_id}:
     get:
       operationId: getPerson
