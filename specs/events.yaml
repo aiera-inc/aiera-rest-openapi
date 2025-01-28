@@ -90,6 +90,7 @@ paths:
         - name: modified_since
           in: query
           required: false
+          
           schema:
             type: string
           description: Returns events modified since this date
