@@ -34,6 +34,7 @@ def create_openapi_tools():
     summaries_api_spec = load_openapi_spec("specs/summaries.yaml")
     corporate_activities_api_spec=load_openapi_spec('specs/corporate_activity.yaml')
     monitors_api_spec=load_openapi_spec('specs/monitor.yaml')
+    topics_api_spec=load_openapi_spec('specs/topics.yaml')
 
     events_tool = Tool(
         name= "Events API",
@@ -66,8 +67,15 @@ def create_openapi_tools():
         description="Tool to retrieve a stream match using a dashboard guid and stream guid "
     )
 
+    topics_tool=Tool(
+        name="Monitors API",
+        func=planner.create_openapi_agent(topics_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
+        description="Tool to retrieve list of topics based on the topic id along with their equities or events or neither, retrive the topic based on the parameters along with their equities or events or neither. "
+    )
 
-    return[events_tool, speaker_tool, summaries_tool, corporate_activities_tool, monitors_tool]
+
+
+    return[events_tool, speaker_tool, summaries_tool, corporate_activities_tool, monitors_tool, topics_tool]
 
 
 def create_openapi_agent():
