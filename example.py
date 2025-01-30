@@ -10,6 +10,7 @@ from langchain.agents import AgentType
 from langchain_community.agent_toolkits.openapi.spec import reduce_openapi_spec
 from langchain.callbacks.tracers import ConsoleCallbackHandler
 from langchain.agents import initialize_agent 
+import re
 
 # Construct authentication headers
 def construct_aiera_auth_headers():
@@ -31,6 +32,7 @@ def create_openapi_tools():
     events_api_spec = load_openapi_spec("specs/events.yaml")
     speaker_api_spec = load_openapi_spec("specs/speaker.yaml")
     summaries_api_spec = load_openapi_spec("specs/summaries.yaml")
+    corporate_activities_api_spec=load_openapi_spec('specs/corporate_activity.yaml')
 
     events_tool = Tool(
         name= "Events API",
@@ -51,8 +53,14 @@ def create_openapi_tools():
         description="Tool to retrieve summaries based on the events filter, event_id, and summary_type."
     )
 
+    corporate_activities_tool= Tool(
+        name="Cporporate Activities API",
+        func=planner.create_openapi_agent(corporate_activities_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
+        description="Tool to retrieve a list of corporate activities that match the parameters provided or the corporate activity id, the corporate activity coverage, and to retrive the audits for them "
+    )
 
-    return[events_tool, speaker_tool, summaries_tool]
+
+    return[events_tool, speaker_tool, summaries_tool, corporate_activities_tool]
 
 
 def create_openapi_agent():
