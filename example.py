@@ -3,10 +3,13 @@ from langchain_community.agent_toolkits.openapi import planner
 from langchain_openai import ChatOpenAI
 import yaml
 import os
+from langchain.agents import AgentType
 from langchain_community.utilities.requests import RequestsWrapper
+from langchain.tools import Tool
+from langchain.agents import AgentType
 from langchain_community.agent_toolkits.openapi.spec import reduce_openapi_spec
 from langchain.callbacks.tracers import ConsoleCallbackHandler
-
+from langchain.agents import initialize_agent 
 
 # Construct authentication headers
 def construct_aiera_auth_headers():
@@ -18,23 +21,47 @@ def load_openapi_spec(file_path):
         raw_spec = yaml.safe_load(file)
     return reduce_openapi_spec(raw_spec)
 
+
+
+
 # Create agent
-def create_openapi_agent():
+def create_openapi_tools():
     headers = construct_aiera_auth_headers()
     requests_wrapper = RequestsWrapper(headers=headers)
-
-    llm = ChatOpenAI(model_name="gpt-4o", temperature=0.3)
+    llm = ChatOpenAI(model_name="gpt-4o", temperature=0.3)  
 
     events_api_spec = load_openapi_spec("specs/events.yaml")
     speaker_api_spec = load_openapi_spec("specs/speaker.yaml")
 
-    agent = planner.create_openapi_agent(
-        events_api_spec,
-        requests_wrapper,
-        llm,
-        allow_dangerous_requests=True,
+    events_tool = Tool(
+        name= "Events API",
+        func=planner.create_openapi_agent(events_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
+        description="Tool to get Event Transcripts as a csv file,  retrieve an event using an event id, or to get a list of events that match the parameters provided"
+    )
+
+
+    speaker_tool= Tool(
+        name="Speakers API",
+        func=planner.create_openapi_agent(speaker_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
+        description="Tool to retrieve retrieves a person's information using their person id."
+    )
+
+
+    return[events_tool, speaker_tool]
+
+
+def create_openapi_agent():
+    tools = create_openapi_tools()
+    llm = ChatOpenAI(model_name="gpt-4o", temperature=0.3)
+    agent = initialize_agent(
+        tools=tools,
+        llm=llm,
+        agent_type=AgentType.OPENAI_FUNCTIONS,  # Correct parameter name
+        verbose=True,
+        handle_parsing_errors=True
     )
     return agent
+
 
 # Function to handle user queries and agent responses
 def get_chat_response(query):
