@@ -33,6 +33,7 @@ def create_openapi_tools():
     speaker_api_spec = load_openapi_spec("specs/speaker.yaml")
     summaries_api_spec = load_openapi_spec("specs/summaries.yaml")
     corporate_activities_api_spec=load_openapi_spec('specs/corporate_activity.yaml')
+    monitors_api_spec=load_openapi_spec('specs/monitor.yaml')
 
     events_tool = Tool(
         name= "Events API",
@@ -59,8 +60,14 @@ def create_openapi_tools():
         description="Tool to retrieve a list of corporate activities that match the parameters provided or the corporate activity id, the corporate activity coverage, and to retrive the audits for them "
     )
 
+    monitors_tool= Tool(
+        name="Monitors API",
+        func=planner.create_openapi_agent(monitors_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
+        description="Tool to retrieve a stream match using a dashboard guid and stream guid "
+    )
 
-    return[events_tool, speaker_tool, summaries_tool, corporate_activities_tool]
+
+    return[events_tool, speaker_tool, summaries_tool, corporate_activities_tool, monitors_tool]
 
 
 def create_openapi_agent():
