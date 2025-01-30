@@ -22,8 +22,6 @@ def load_openapi_spec(file_path):
     return reduce_openapi_spec(raw_spec)
 
 
-
-
 # Create agent
 def create_openapi_tools():
     headers = construct_aiera_auth_headers()
@@ -32,6 +30,7 @@ def create_openapi_tools():
 
     events_api_spec = load_openapi_spec("specs/events.yaml")
     speaker_api_spec = load_openapi_spec("specs/speaker.yaml")
+    summaries_api_spec = load_openapi_spec("specs/summaries.yaml")
 
     events_tool = Tool(
         name= "Events API",
@@ -44,6 +43,12 @@ def create_openapi_tools():
         name="Speakers API",
         func=planner.create_openapi_agent(speaker_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
         description="Tool to retrieve retrieves a person's information using their person id."
+    )
+
+    summaries_tool= Tool(
+        name="Summaries API",
+        func=planner.create_openapi_agent(summaries_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
+        description="Tool to retrieve summaries based on the events filter, event_id, and summary_type."
     )
 
 
