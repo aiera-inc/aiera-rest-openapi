@@ -42,7 +42,7 @@ def create_openapi_tools():
     speaker_tool= Tool(
         name="Speakers API",
         func=planner.create_openapi_agent(speaker_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
-        description="Tool to retrieve retrieves a person's information using their person id."
+        description="Tool to retrieves a person's information using their person id."
     )
 
     summaries_tool= Tool(
