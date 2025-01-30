@@ -7,21 +7,26 @@ from langchain_community.utilities.requests import RequestsWrapper
 from langchain_community.agent_toolkits.openapi.spec import reduce_openapi_spec
 from langchain.callbacks.tracers import ConsoleCallbackHandler
 
+
 # Construct authentication headers
 def construct_aiera_auth_headers():
     return {"X-API-Key": os.environ["AIERA_API_KEY"]}
 
-# Load API spec and create agent
+# Load OpenAPI spec
+def load_openapi_spec(file_path):
+    with open(file_path, "r") as file:
+        raw_spec = yaml.safe_load(file)
+    return reduce_openapi_spec(raw_spec)
+
+# Create agent
 def create_openapi_agent():
     headers = construct_aiera_auth_headers()
     requests_wrapper = RequestsWrapper(headers=headers)
 
     llm = ChatOpenAI(model_name="gpt-4o", temperature=0.3)
 
-    with open("specs/events.yaml", "r") as file:
-        raw_events_api_spec = yaml.safe_load(file)
-
-    events_api_spec = reduce_openapi_spec(raw_events_api_spec)
+    events_api_spec = load_openapi_spec("specs/events.yaml")
+    speaker_api_spec = load_openapi_spec("specs/speaker.yaml")
 
     agent = planner.create_openapi_agent(
         events_api_spec,
