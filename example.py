@@ -52,7 +52,7 @@ def create_openapi_tools():
     )
 
 
-    return[events_tool, speaker_tool]
+    return[events_tool, speaker_tool, summaries_tool]
 
 
 def create_openapi_agent():
