@@ -35,6 +35,7 @@ def create_openapi_tools():
     corporate_activities_api_spec=load_openapi_spec('specs/corporate_activity.yaml')
     monitors_api_spec=load_openapi_spec('specs/monitor.yaml')
     topics_api_spec=load_openapi_spec('specs/topics.yaml')
+    equities_api_spec=load_openapi_spec('specs/equity.yaml')
 
     events_tool = Tool(
         name= "Events API",
@@ -70,12 +71,18 @@ def create_openapi_tools():
     topics_tool=Tool(
         name="Monitors API",
         func=planner.create_openapi_agent(topics_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
-        description="Tool to retrieve list of topics. When asked to retrive list of topics simply call the /topics api. In case of a topic id given call the /topics/{topic_id} api. If given a topic id and asked to get the equities or events for a topic call the /topics/{topic_id}/equities or /topics/{topic_id}/events api respectively. If given a topic and asked to get the equities or events for a topic call the /topics/equities or /topics/events api respectively."
+        description="Tool to retrieve list of topics. When asked to retrive list of topics simply call the /topics api. In case of a topic id given call the /topics/topic_id api. If given a topic id and asked to get the equities or events for a topic call the /topics/topic_id/equities or /topics/topic_id/events api respectively. If given a topic and asked to get the equities or events for a topic call the /topics/equities or /topics/events api respectively."
+    )
+
+    equities_tool=Tool(
+        name="Equities API",
+        func=planner.create_openapi_agent(equities_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
+        description=" Tool to retrieve a list of sectors along with their subsectors, to retrieve a list of equities and to retrive equity info according to the equity id "
     )
 
 
 
-    return[events_tool, speaker_tool, summaries_tool, corporate_activities_tool, monitors_tool, topics_tool]
+    return[events_tool, speaker_tool, summaries_tool, corporate_activities_tool, monitors_tool, topics_tool, equities_tool]
 
 
 def create_openapi_agent():
