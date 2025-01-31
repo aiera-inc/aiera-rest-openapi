@@ -36,6 +36,7 @@ def create_openapi_tools():
     monitors_api_spec=load_openapi_spec('specs/monitor.yaml')
     topics_api_spec=load_openapi_spec('specs/topics.yaml')
     equities_api_spec=load_openapi_spec('specs/equity.yaml')
+    contents_api_spec=load_openapi_spec('specs/content.yaml')
 
     events_tool = Tool(
         name= "Events API",
@@ -80,9 +81,15 @@ def create_openapi_tools():
         description=" Tool to retrieve a list of sectors along with their subsectors, to retrieve a list of equities and to retrive equity info according to the equity id "
     )
 
+    contents_tool=Tool(
+        name="Contents API",
+        func= planner.create_openapi_agent(contents_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
+        description= "Tool to retrieve filings and news content for specific equities or filters such as form number, date range, or ticker symbol"
+    )
 
 
-    return[events_tool, speaker_tool, summaries_tool, corporate_activities_tool, monitors_tool, topics_tool, equities_tool]
+
+    return[events_tool, speaker_tool, summaries_tool, corporate_activities_tool, monitors_tool, topics_tool, equities_tool, contents_tool]
 
 
 def create_openapi_agent():
