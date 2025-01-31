@@ -1,0 +1,43 @@
+openapi: 3.1.0
+info:
+  title: Aiera Events API
+  description: API for accessing events data from Aiera
+  version: 1.0.0
+servers:
+  - url: https://premium.aiera.com/api
+security:
+  - ApiKeyAuth: []
+paths:
+  /events-v2/tonal/export/csv:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getTonalSentiments``
+      description: Retrieves a csv file of the tonal sentiments.
+      summary: Retrieves a csv file of a tonal sentiment.
+      parameters:
+        - name: bloomberg_ticker
+          in: query
+          required: false
+          schema:
+            type: string
+          description: bloomberg ticker of the event.
+      responses:
+        "200":
+          description: Successfully uploaded the csv file.
+          content:
+            application/csv:
+              schema:
+                type: string
+                format: binary
+          headers:
+            content-disposition:
+              schema:
+                type: string
+                description: Used only with `application/pdf` responses
+                example: attachment; filename="name.pdf"
+            content-encoding:
+              schema:
+                type: string
+                description: Encoding of the file.
+
