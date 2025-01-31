@@ -8,7 +8,7 @@ servers:
 security:
   - ApiKeyAuth: []
 paths:
-  /topics/{topic_id:}:
+  /topics/{topic_id}:
     get:
       operationId: getEvent
       description: Retrieves an event using an event id.

@@ -70,7 +70,7 @@ def create_openapi_tools():
     topics_tool=Tool(
         name="Monitors API",
         func=planner.create_openapi_agent(topics_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
-        description="Tool to retrieve list of topics based on the topic id along with their equities or events or neither, retrive the topic based on the parameters along with their equities or events or neither. "
+        description="Tool to retrieve list of topics. When asked to retrive list of topics simply call the /topics api. In case of a topic id given call the /topics/{topic_id} api. If given a topic id and asked to get the equities or events for a topic call the /topics/{topic_id}/equities or /topics/{topic_id}/events api respectively. If given a topic and asked to get the equities or events for a topic call the /topics/equities or /topics/events api respectively."
     )
 
 
