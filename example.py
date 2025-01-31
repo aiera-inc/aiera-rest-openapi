@@ -38,7 +38,7 @@ def create_openapi_tools():
     equities_api_spec=load_openapi_spec('specs/equity.yaml')
     contents_api_spec=load_openapi_spec('specs/content.yaml')
     transcrippets_api_spec=load_openapi_spec('specs/transcrippets.yaml')
-
+    tonalSentiment_api_spec=load_openapi_spec('specs/tonalSentiments.yaml')
 
     events_tool = Tool(
         name= "Events API",
@@ -95,7 +95,13 @@ def create_openapi_tools():
         description="Tool to retrieve a transcrippet url according to the parameters"
     )
 
-    return[events_tool, speaker_tool, summaries_tool, corporate_activities_tool, monitors_tool, topics_tool, equities_tool, contents_tool, transcrippeets_tool]
+    tonalSentiment_tool=Tool(
+        name="Tonal Sentiment API",
+        func=planner.create_openapi_agent(tonalSentiment_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
+        description="Tool to retrieve a csv file of the tonal sentiments."
+    )
+
+    return[events_tool, speaker_tool, summaries_tool, corporate_activities_tool, monitors_tool, topics_tool, equities_tool, contents_tool, transcrippeets_tool, tonalSentiment_tool]
 
 
 def create_openapi_agent():
