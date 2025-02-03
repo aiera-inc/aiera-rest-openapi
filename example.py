@@ -39,6 +39,7 @@ def create_openapi_tools():
     contents_api_spec=load_openapi_spec('specs/content.yaml')
     transcrippets_api_spec=load_openapi_spec('specs/transcrippets.yaml')
     tonalSentiment_api_spec=load_openapi_spec('specs/tonalSentiments.yaml')
+    calendar_api_spec=load_openapi_spec('specs/calendar.yaml')
 
     events_tool = Tool(
         name= "Events API",
@@ -46,17 +47,17 @@ def create_openapi_tools():
         description="Tool to get Event Transcripts as a csv file,  retrieve an event using an event id, or to get a list of events that match the parameters provided"
     )
 
+    calendars_tool= Tool(
+        name= "Calendars API",
+        func=planner.create_openapi_agent(calendar_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
+        description="Tool to get a list of calendar events filtered by equity, watchlist, or other parameters, to retrieve information about equities covered by the API and to retrieve details of a specific calendar event by its event ID "
+    )
+
 
     speaker_tool= Tool(
         name="Speakers API",
         func=planner.create_openapi_agent(speaker_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
         description="Tool to retrieves a person's information using their person id."
-    )
-
-    summaries_tool= Tool(
-        name="Summaries API",
-        func=planner.create_openapi_agent(summaries_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
-        description="Tool to retrieve summaries based on the events filter, event_id, and summary_type."
     )
 
     corporate_activities_tool= Tool(
@@ -101,7 +102,13 @@ def create_openapi_tools():
         description="Tool to retrieve a csv file of the tonal sentiments."
     )
 
-    return[events_tool, speaker_tool, summaries_tool, corporate_activities_tool, monitors_tool, topics_tool, equities_tool, contents_tool, transcrippeets_tool, tonalSentiment_tool]
+    summaries_tool= Tool(
+        name="Summaries API",
+        func=planner.create_openapi_agent(summaries_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
+        description="Tool for retrieving the field summaries from events. Use this only when specifically asked for summaries based on event filter, event_id, and summary_type."
+    )
+
+    return[events_tool, calendars_tool, speaker_tool, summaries_tool, corporate_activities_tool, monitors_tool, topics_tool, equities_tool, contents_tool, transcrippeets_tool, tonalSentiment_tool]
 
 
 def create_openapi_agent():
@@ -112,6 +119,7 @@ def create_openapi_agent():
         llm=llm,
         agent_type=AgentType.OPENAI_FUNCTIONS,  # Correct parameter name
         verbose=True,
+        max_iterations=100,
         handle_parsing_errors=True
     )
     return agent
