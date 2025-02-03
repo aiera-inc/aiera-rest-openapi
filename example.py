@@ -73,9 +73,9 @@ def create_openapi_tools():
     )
 
     topics_tool=Tool(
-        name="Monitors API",
+        name="Topics API",
         func=planner.create_openapi_agent(topics_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
-        description="Tool to retrieve list of topics. When asked to retrive list of topics simply call the /topics api. In case of a topic id given call the /topics/topic_id api. If given a topic id and asked to get the equities or events for a topic call the /topics/topic_id/equities or /topics/topic_id/events api respectively. If given a topic and asked to get the equities or events for a topic call the /topics/equities or /topics/events api respectively."
+        description="Tool to retrieve list of topics. When asked to retrive list of topics simply call the /topics api. In case of a topic id given call the /topics/topic_id api. If given a topic id and asked to get the equities or events for a topic call the /topics/topic_id/equities or /topics/topic_id/events api respectively. If given a topic and asked to get the equities or events for a topic call the /topics/equities or /topics/events api respectively When searching for a specific topic like 'covid', use the query parameter in /topics endpoint"
     )
 
     equities_tool=Tool(
@@ -113,13 +113,14 @@ def create_openapi_tools():
 
 def create_openapi_agent():
     tools = create_openapi_tools()
-    llm = ChatOpenAI(model_name="gpt-4o", temperature=0.3)
+    llm = ChatOpenAI(model_name="gpt-4o", temperature=0.3, max_tokens=1000)
     agent = initialize_agent(
         tools=tools,
         llm=llm,
         agent_type=AgentType.OPENAI_FUNCTIONS,  # Correct parameter name
         verbose=True,
         max_iterations=100,
+        max_execution_time=40,
         handle_parsing_errors=True
     )
     return agent
