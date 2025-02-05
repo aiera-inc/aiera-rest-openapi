@@ -75,7 +75,27 @@ def create_openapi_tools():
     topics_tool=Tool(
         name="Topics API",
         func=planner.create_openapi_agent(topics_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
-        description="Tool to retrieve list of topics. When asked to retrive list of topics simply call the /topics api. In case of a topic id given call the /topics/topic_id api. If given a topic id and asked to get the equities or events for a topic call the /topics/topic_id/equities or /topics/topic_id/events api respectively. If given a topic and asked to get the equities or events for a topic call the /topics/equities or /topics/events api respectively When searching for a specific topic like 'covid', use the query parameter in /topics endpoint"
+        description="""Tool to retrieve list of topics. IMPORTANT RULES:
+    1. When searching for topics containing a specific word:
+       - ONLY call GET /topics
+       - Return ONLY the direct response
+       - DO NOT fetch any additional information
+       - DO NOT call any other endpoints
+       - STOP after getting the topics list
+    
+    2. When retrieving all topics:
+       - Call GET /topics
+       - Return ONLY topic names and IDs
+       - STOP after getting the list
+    
+    3. For specific topic ID requests:
+       - Use GET /topics/topic_id
+    
+    4. For topic-related equities or events:
+       - With topic ID: Use /topics/topic_id/equities or /topics/topic_id/events
+       - Without topic ID: Use /topics/equities or /topics/events
+    
+    IMPORTANT: When asked about topics containing a word (e.g., 'covid'), ONLY use GET /topics?query=word and return the direct response. DO NOT fetch additional details."""
     )
 
     equities_tool=Tool(
@@ -119,8 +139,8 @@ def create_openapi_agent():
         llm=llm,
         agent_type=AgentType.OPENAI_FUNCTIONS,  # Correct parameter name
         verbose=True,
-        max_iterations=100,
-        max_execution_time=40,
+        max_iterations=10000,
+        max_execution_time=120,
         handle_parsing_errors=True
     )
     return agent

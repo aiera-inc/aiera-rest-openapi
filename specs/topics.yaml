@@ -65,7 +65,7 @@ paths:
             type: integer
       responses:
         "200":
-          description: An array of event objects
+          description: An array of topic objects
           content:
             application/json:
               schema:
