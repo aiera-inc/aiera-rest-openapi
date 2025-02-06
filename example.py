@@ -11,6 +11,7 @@ from langchain_community.agent_toolkits.openapi.spec import reduce_openapi_spec
 from langchain.callbacks.tracers import ConsoleCallbackHandler
 from langchain.agents import initialize_agent 
 import re
+from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
 
 # Construct authentication headers
 def construct_aiera_auth_headers():
@@ -77,23 +78,30 @@ def create_openapi_tools():
         func=planner.create_openapi_agent(topics_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
         description="""Tool to retrieve list of topics. IMPORTANT RULES:
     1. When searching for topics containing a specific word:
-       - ONLY call GET /topics
-       - Return ONLY the direct response
-       - DO NOT fetch any additional information
+       - ONLY call GET /topics with the search parameter as the word
+       - DO NOT Extract the event_id, event_type, title, and date for each event.
+       - DO NOT Extract the equity_id and bloomberg_ticker for each equity.
        - DO NOT call any other endpoints
-       - STOP after getting the topics list
+       - STOP after getting the topics list once
+       - DO NOT proceed with retrieving equities and events.
+       - END the response with the list of topic names and their topic ids
+       - Example: "Get me the list of topics with the word covid in it". For this the plan is to call the GET /topics with the search parameter as 'covid'.
     
     2. When retrieving all topics:
        - Call GET /topics
-       - Return ONLY topic names and IDs
-       - STOP after getting the list
+       - DO NOT Extract the event_id, event_type, title, and date for each event.
+       - DO NOT Extract the equity_id and bloomberg_ticker for each equity.
+       - DO NOT call any other endpoints
+       - STOP after getting the topics list once
+       - DO NOT proceed with retrieving equities and events.
+       - END the response with the list of topic names and their topic ids
     
     3. For specific topic ID requests:
        - Use GET /topics/topic_id
     
     4. For topic-related equities or events:
-       - With topic ID: Use /topics/topic_id/equities or /topics/topic_id/events
-       - Without topic ID: Use /topics/equities or /topics/events
+       - With topic ID, if asked to find the equity or event associated with a specific topic id: Use /topics/topic_id/equities or /topics/topic_id/events and return the list directly
+       - Without topic ID, if asked to find the equity or event associated: Use /topics/equities or /topics/events
     
     IMPORTANT: When asked about topics containing a word (e.g., 'covid'), ONLY use GET /topics?query=word and return the direct response. DO NOT fetch additional details."""
     )
@@ -134,13 +142,45 @@ def create_openapi_tools():
 def create_openapi_agent():
     tools = create_openapi_tools()
     llm = ChatOpenAI(model_name="gpt-4o", temperature=0.3, max_tokens=1000)
+    system_message = """You are an AI assistant with access to various API tools. Follow these strict guidelines:
+
+    1. Execute Operations Efficiently:
+       - Before making any API call, carefully plan which specific API endpoint is needed
+       - Use only ONE API call per request 
+       - Avoid making redundant or duplicate API calls
+       - If multiple options exist, choose the most direct method
+    
+    2. API Usage Rules:
+       - Always check if the required information can be obtained from a single API call
+       - Do not make exploratory API calls - only call what's necessary
+       - When searching, use the most specific parameters available
+       - If an API call fails, explain the issue rather than trying alternative calls
+    
+    3. Response Guidelines:
+       - Provide direct, concise responses
+       - Only include information specifically requested
+       - Format responses clearly and consistently
+       - If the required information cannot be obtained with a single API call, explain why
+
+    4. Error Handling:
+       - If an API call fails, do not attempt multiple alternative calls
+       - Clearly report any errors or limitations
+       - Suggest the most appropriate alternative approach if needed
+
+    Remember: Your goal is to be efficient and precise, minimizing API calls while providing accurate information."""
+
+    prompt = ChatPromptTemplate.from_messages([
+        SystemMessagePromptTemplate.from_template(system_message),
+    ])
+
+
     agent = initialize_agent(
         tools=tools,
         llm=llm,
-        agent_type=AgentType.OPENAI_FUNCTIONS,  # Correct parameter name
+        prompt=prompt,
+        agent_type=AgentType.OPENAI_FUNCTIONS,  
         verbose=True,
         max_iterations=10000,
-        max_execution_time=120,
         handle_parsing_errors=True
     )
     return agent
