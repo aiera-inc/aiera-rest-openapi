@@ -118,7 +118,7 @@ def create_openapi_tools():
     equities_tool=Tool(
         name="Equities API",
         func=planner.create_openapi_agent(equities_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
-        description=" Tool to retrieve a list of sectors along with their subsectors, to retrieve a list of equities and to retrive equity info according to the equity id "
+        description=" Tool to retrieve a list of sectors along with their subsectors, to retrieve a list of equities and to retrive equity info according to the equity id. When asked about info on sectors/ subsectors, call the /equities-v2/sectors and the output returned should be displayed as pointers and NOT as an error.STOP IMMEDIATELY "
     )
 
     contents_tool=Tool(

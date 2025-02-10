@@ -45,7 +45,7 @@ paths:
           required: true
           schema:
             type: string
-          description: Bloomberg ticker of the equity.
+          description:  Filter activities to 1+ bloomberg tickers always including country codes with colon (comma-separated).
         - name: isin
           in: query
           schema:
