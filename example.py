@@ -62,9 +62,9 @@ def create_openapi_tools():
     )
 
     corporate_activities_tool= Tool(
-        name="Cporporate Activities API",
+        name="Corporate Activities API",
         func=planner.create_openapi_agent(corporate_activities_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
-        description="Tool to retrieve a list of corporate activities that match the parameters provided or the corporate activity id, the corporate activity coverage, and to retrive the audits for them. When asked about counts or numbers, return only the the count of results, formatted as a number "
+        description="Tool to retrieve a list of corporate activities that match the parameters provided or the corporate activity id and return the list of events directly, the corporate activity coverage, and to retrive the audits for them. When asked about counts or numbers or how many, return only the the count of results, formatted as a number "
     )
 
     monitors_tool= Tool(

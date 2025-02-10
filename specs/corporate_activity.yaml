@@ -19,19 +19,17 @@ paths:
         - name: start_date
           in: query
           required: true
-          description: Filter activities starting from this date.
+          description: Fetch events on or after this date (defaults to 2 weeks ago)
           schema:
             type: string
             format: date-time
-            default: datetime.date.today() - datetime.timedelta(days=28)
         - name: end_date
           in: query
           required: true
-          description: Filter activities up to this date.
+          description: Fetch events on or before this date (defaults to 2 weeks afrom now)
           schema:
             type: string
             format: date-time
-            default: datetime.date.today() + datetime.timedelta(days=28)
         - name: modified_since
           in: query
           required: false
@@ -54,7 +52,7 @@ paths:
         - name: bloomberg_ticker
           in: query
           required: true
-          description: Filter activities by Bloomberg ticker.
+          description: Filter activities to 1+ bloomberg tickers always including country codes with colon (comma-separated).
           schema:
             type: string
         - name: size
@@ -94,10 +92,7 @@ paths:
         - name: bloomberg_ticker
           in: query
           required: true
-          description: |
-            Retrieve details of equities covered by the corporate activity API.
-            - If `bloomberg_ticker` is provided, returns details specific to the given ticker.
-            - If `bloomberg_ticker` is not provided, returns general equities coverage.
+          description: Fetch events on or after this date (defaults to 2 weeks ago)
           schema:
             type: string
             default: ALL
