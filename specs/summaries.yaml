@@ -13,7 +13,7 @@ paths:
       security:
         - ApiKeyAuth: []
       operationId: getEventSummaries
-      description: Retrieves summaries based on the events filter.
+      description: Retrieves summaries based on the filter like bloomberg ticker, start date and end date.
       summary: Retrieves a summary fo the event.
       parameters:
         - name: event_type
@@ -27,16 +27,17 @@ paths:
           schema:
             type: string
             format: date-time
-            default: 2024-10-31T23:59:59.999999
+            description: Fetch events on or after this date (defaults to 2 weeks ago)
         - name: end_date
           in: query
           required: true
           schema:
             type: string
             format: date-time
-            derfault: 2024-10-31T23:59:59.999999
+          description: Fetch events on or before this date (defaults to 2 weeks from now)
         - name: bloomberg_ticker
           in: query
+          description: Filter events to 1+ bloomberg tickers always including country codes with colon (comma-separated).
           required: true
           schema:
             type: string

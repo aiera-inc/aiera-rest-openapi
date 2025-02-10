@@ -142,7 +142,7 @@ def create_openapi_tools():
     summaries_tool= Tool(
         name="Summaries API",
         func=planner.create_openapi_agent(summaries_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
-        description="Tool for retrieving the field summaries from events. Use this only when specifically asked for summaries based on event filter, event_id, and summary_type."
+        description="Tool for retrieving the field summaries from events. Use this only when specifically asked for summaries based on event filter, event_id, and summary_type. When asked to get summaries for a specific bloomberg ticker within a given date range call /summaries with the parameters as enetered by the user"
     )
 
     return[events_tool, calendars_tool, speaker_tool, corporate_activities_tool, monitors_tool, topics_tool, equities_tool, contents_tool, transcrippeets_tool, tonalSentiment_tool, summaries_tool]
@@ -151,7 +151,19 @@ def create_openapi_tools():
 def create_openapi_agent():
     tools = create_openapi_tools()
     llm = ChatOpenAI(model_name="gpt-4o", temperature=0.3, max_tokens=1000)
-    system_message = """You are an AI assistant with access to various API tools. Follow these strict guidelines:
+    system_message = """You are an AI assistant with access to various API tools. When given an input you need to choose from the various tools:
+    1. Events API: Tool to get Event Transcripts as a csv file,  retrieve an event using an event id, or to get a list of events that match the parameters provided
+    2. Calendars API: Tool to get a list of calendar events filtered by equity, watchlist, or other parameters, to retrieve information about equities covered by the API and to retrieve details of a specific calendar event by its event ID
+    3. Speakers API: Tool to retrieves a person's information using their person id.
+    4. Corporate Activities API: Tool to retrieve a list of corporate activities that match the parameters provided or the corporate activity id, the corporate activity coverage, and to retrive the audits for them. When asked about counts or numbers, return only the the count of results, formatted as a number
+    5. Monitors API: Tool to retrieve a stream match using a dashboard guid and stream guid
+    6. Topics API: Tool to retrieve info regarding topics
+    7. Equities API: Tool to retrieve a list of sectors along with their subsectors, to retrieve a list of equities and to retrive equity info according to the equity id
+    8. Contents API: Tool to retrieve filings and news content for specific equities or filters such as form number, date range, or ticker symbol
+    9. Transcrippets API: Tool to retrieve a transcrippet url according to the parameters
+    10. Tonal Sentiment API: Tool to retrieve a csv file of the tonal sentiments.
+    11. Summaries API: Tool for retrieving the summaries attribute of an event. Use this only when specifically asked for summaries based on event filter, event_id, and summary_type. When asked to get summaries for a specific bloomberg ticker within a given date range call /summaries with the parameters as enetered by the user
+    Follow these strict guidelines:
     For topic searches:
     1. IF the query contains "get topics" or "find topics" or "search topics":
        - ONLY use GET /topics?search=word
