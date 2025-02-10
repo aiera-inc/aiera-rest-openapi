@@ -33,27 +33,22 @@ paths:
             default: earnings
         - name: start_date
           in: query
-          description: >
-            Fetch events greater than or equal to this date 
-            (default: -2 weeks from query date).
-          required: true
+          description: Fetch events on or after this date (defaults to 2 weeks ago)
+          required: false
           schema:
             type: string
             format: date-time
-            default: date.today() - timedelta(weeks=2)
         - name: end_date
           in: query
-          description: |
-            Fetch events less than or equal to this date (default: +2 weeks from query date).
-          required: true
+          description: Fetch events on or before this date (defaults to 2 weeks from now)
+          required: false
           schema:
             type: string
             format: date-time
-            default: date.today() + timedelta(weeks=2)
         - name: bloomberg_ticker
           in: query
           required: true
-          description: Filter events to Bloomberg tickers (comma-separated).
+          description: Filter events to 1+ bloomberg tickers always including country codes with colon (comma-separated).
           schema:
             type: string
         - name: isin
@@ -144,7 +139,7 @@ paths:
       parameters:
         - name: bloomberg_ticker
           in: query
-          description: Bloomberg formatted ticker filter.
+          description: Filter events to 1+ bloomberg tickers always including country codes with colon (comma-separated).
           required: false
           schema:
             type: string

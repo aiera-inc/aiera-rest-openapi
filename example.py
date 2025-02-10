@@ -150,7 +150,7 @@ def create_openapi_tools():
 
 def create_openapi_agent():
     tools = create_openapi_tools()
-    llm = ChatOpenAI(model_name="gpt-4o", temperature=0.3, max_tokens=1000)
+    llm = ChatOpenAI(model_name="gpt-4o", temperature=0.3, max_tokens=10000)
     system_message = """You are an AI assistant with access to various API tools. When given an input you need to choose from the various tools:
     1. Events API: Tool to get Event Transcripts as a csv file,  retrieve an event using an event id, or to get a list of events that match the parameters provided
     2. Calendars API: Tool to get a list of calendar events filtered by equity, watchlist, or other parameters, to retrieve information about equities covered by the API and to retrieve details of a specific calendar event by its event ID
