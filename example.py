@@ -77,33 +77,42 @@ def create_openapi_tools():
         name="Topics API",
         func=planner.create_openapi_agent(topics_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
         description="""Tool to retrieve list of topics. IMPORTANT RULES:
-    1. When searching for topics containing a specific word:
-       - ONLY call GET /topics with the search parameter as the word
-       - DO NOT Extract the event_id, event_type, title, and date for each event.
-       - DO NOT Extract the equity_id and bloomberg_ticker for each equity.
-       - DO NOT call any other endpoints
-       - STOP after getting the topics list once
-       - DO NOT proceed with retrieving equities and events.
-       - END the response with the list of topic names and their topic ids
-       - Example: "Get me the list of topics with the word covid in it". For this the plan is to call the GET /topics with the search parameter as 'covid'.
-    
-    2. When retrieving all topics:
-       - Call GET /topics
-       - DO NOT Extract the event_id, event_type, title, and date for each event.
-       - DO NOT Extract the equity_id and bloomberg_ticker for each equity.
-       - DO NOT call any other endpoints
-       - STOP after getting the topics list once
-       - DO NOT proceed with retrieving equities and events.
-       - END the response with the list of topic names and their topic ids
-    
-    3. For specific topic ID requests:
-       - Use GET /topics/topic_id
-    
-    4. For topic-related equities or events:
-       - With topic ID, if asked to find the equity or event associated with a specific topic id: Use /topics/topic_id/equities or /topics/topic_id/events and return the list directly
-       - Without topic ID, if asked to find the equity or event associated: Use /topics/equities or /topics/events
-    
-    IMPORTANT: When asked about topics containing a word (e.g., 'covid'), ONLY use GET /topics?query=word and return the direct response. DO NOT fetch additional details."""
+        1. ONE API CALL ONLY PER REQUEST - NO EXCEPTIONS
+        
+        Allowed Operations (Choose Only One):
+        - ONE GET /topics with search parameter
+        - ONE GET /topics (no parameters)
+        - ONE GET /topics/topic_id
+        - ONE GET /topics/topic_id/equities
+        - ONE GET /topics/topic_id/events
+        - ONE GET /topics/from_equities
+        - ONE GET /topics/from_events
+        
+        Usage Patterns:
+        1. Search topics by word:
+           - Use: GET /topics?search=word
+           - Return: Only topic names and IDs
+           - STOP immediately after
+        
+        2. Get all topics:
+           - Use: GET /topics
+           - Return: Only topic names and IDs
+           - STOP immediately after
+        
+        3. Get topic by ID:
+           - Use: GET /topics/topic_id
+           - Return: Only requested topic info
+           - STOP immediately after
+        
+        4. Get equities/events for topic ID:
+           - Use: Either /topics/topic_id/equities OR /topics/topic_id/events
+           - Return: Only requested association info
+           - STOP immediately after
+        
+        FORBIDDEN:
+        - Multiple API calls
+        - Chaining requests
+        - Following up with additional queries"""
     )
 
     equities_tool=Tool(
@@ -136,38 +145,55 @@ def create_openapi_tools():
         description="Tool for retrieving the field summaries from events. Use this only when specifically asked for summaries based on event filter, event_id, and summary_type."
     )
 
-    return[events_tool, calendars_tool, speaker_tool, summaries_tool, corporate_activities_tool, monitors_tool, topics_tool, equities_tool, contents_tool, transcrippeets_tool, tonalSentiment_tool]
+    return[events_tool, calendars_tool, speaker_tool, corporate_activities_tool, monitors_tool, topics_tool, equities_tool, contents_tool, transcrippeets_tool, tonalSentiment_tool, summaries_tool]
 
 
 def create_openapi_agent():
     tools = create_openapi_tools()
     llm = ChatOpenAI(model_name="gpt-4o", temperature=0.3, max_tokens=1000)
     system_message = """You are an AI assistant with access to various API tools. Follow these strict guidelines:
-
-    1. Execute Operations Efficiently:
-       - Before making any API call, carefully plan which specific API endpoint is needed
-       - Use only ONE API call per request 
-       - Avoid making redundant or duplicate API calls
-       - If multiple options exist, choose the most direct method
+    For topic searches:
+    1. IF the query contains "get topics" or "find topics" or "search topics":
+       - ONLY use GET /topics?search=word
+       - Return EXACT response
+       - STOP IMMEDIATELY
+    CRITICAL RULES:
+    1. ONE API CALL ONLY - You must stop after making a single API call
+    2. NO FOLLOW-UP CALLS - Never attempt additional queries
+    3. NO CHAINING - Do not try to combine multiple endpoints
+    Process:
+    1. Analyze the user query carefully
+    2. Identify the SINGLE most appropriate API endpoint
+    3. Make ONE call only
+    4. Return results immediately
+    5. STOP COMPLETELY - Do not attempt any additional operations
     
-    2. API Usage Rules:
+    1. Single API Call Rule (MOST IMPORTANT):
+       - You MUST make exactly ONE API call per request
+       - NEVER make follow-up API calls
+    
+    3. API Usage Rules:
        - Always check if the required information can be obtained from a single API call
        - Do not make exploratory API calls - only call what's necessary
        - When searching, use the most specific parameters available
        - If an API call fails, explain the issue rather than trying alternative calls
     
-    3. Response Guidelines:
+    4. Response Guidelines:
        - Provide direct, concise responses
        - Only include information specifically requested
        - Format responses clearly and consistently
        - If the required information cannot be obtained with a single API call, explain why
 
-    4. Error Handling:
+    5. Error Handling:
        - If an API call fails, do not attempt multiple alternative calls
        - Clearly report any errors or limitations
        - Suggest the most appropriate alternative approach if needed
-
-    Remember: Your goal is to be efficient and precise, minimizing API calls while providing accurate information."""
+    Important Example: When asked to retrive the topics with the word "covid" in it, you should use the /topics?search=covid endpoint and stop immediately. If asked to find the events associated with a topic id, you should use the /topics/topic_id/events endpoint and stop immediately. If asked to find the equities associated with a topic id, you should use the /topics/topic_id/equities endpoint and stop immediately. If asked to find the events for a topic related to a word, DO NOT fetch the topic id but you should use the /topics/from_events endpoint with search=word and stop immediately. If asked to find the equities for a topic related to a word, DO NOT fetch the topic id you should use the /topics/from_equities endpoint with search=word and stop immediately.
+    Remember: Your goal is to be efficient and precise, using only and only 1 API calls while providing accurate information
+     You MUST STOP after the first API call, regardless of the results.
+    CRITICAL: You must STOP after the first agent run. Do not make any additional calls regardless of the data received.
+    Example:
+    """
 
     prompt = ChatPromptTemplate.from_messages([
         SystemMessagePromptTemplate.from_template(system_message),
@@ -180,7 +206,8 @@ def create_openapi_agent():
         prompt=prompt,
         agent_type=AgentType.OPENAI_FUNCTIONS,  
         verbose=True,
-        max_iterations=10000,
+        max_iterations=100,
+        early_stopping_method="force",
         handle_parsing_errors=True
     )
     return agent
