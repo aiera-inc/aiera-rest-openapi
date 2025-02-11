@@ -13,7 +13,7 @@ paths:
       security:
         - ApiKeyAuth: []
       operationId: getTonalSentiments``
-      description: Retrieves a csv file of the tonal sentiments.
+      description: Export tonal sentiment to csv. .
       summary: Retrieves a csv file of a tonal sentiment.
       parameters:
         - name: bloomberg_ticker
@@ -21,7 +21,8 @@ paths:
           required: false
           schema:
             type: string
-          description: bloomberg ticker of the event.
+          description: Filter events to 1+ bloomberg tickers always including country codes with colon (comma-separated).
+      
       responses:
         "200":
           description: Successfully uploaded the csv file.

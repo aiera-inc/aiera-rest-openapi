@@ -136,7 +136,7 @@ def create_openapi_tools():
     tonalSentiment_tool=Tool(
         name="Tonal Sentiment API",
         func=planner.create_openapi_agent(tonalSentiment_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
-        description="Tool to retrieve a csv file of the tonal sentiments."
+        description="Tool to Export tonal sentiment to csv."
     )
 
     summaries_tool= Tool(
