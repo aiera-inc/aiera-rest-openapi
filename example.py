@@ -207,11 +207,11 @@ def create_openapi_agent():
     Example:
     """
 
+
     prompt = ChatPromptTemplate.from_messages([
         SystemMessagePromptTemplate.from_template(system_message),
     ])
-
-
+    
     agent = initialize_agent(
         tools=tools,
         llm=llm,
