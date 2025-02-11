@@ -124,7 +124,7 @@ def create_openapi_tools():
     contents_tool=Tool(
         name="Contents API",
         func= planner.create_openapi_agent(contents_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
-        description= "Tool to retrieve filings and news content for specific equities or filters such as form number, date range, or ticker symbol"
+        description= "Tool to retrieve filings and news content for specific equities or filters such as form number, date range, or ticker symbol. All the details should be displayed in the ouput result."
     )
 
     transcrippeets_tool=Tool(

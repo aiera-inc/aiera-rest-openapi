@@ -43,7 +43,7 @@ paths:
           required: true
           schema:
             type: string
-          description: Bloomberg ticker to filter filings content by.
+          description: Filter events to 1+ bloomberg tickers always including country codes with colon (comma-separated).
         - name: isin
           in: query
           required: false
@@ -125,14 +125,14 @@ paths:
         - name: start_date
           in: query
           required: true
-          description: Filter activities starting from this date.
+          description: Fetch events on or after this date (defaults to 2 weeks ago)
           schema:
             type: string
             format: date-time
         - name: end_date
           in: query
           required: true
-          description: Filter activities up to this date.
+          description:  Fetch events on or before this date (defaults to 2 weeks from now)
           schema:
             type: string
             format: date-time
@@ -141,7 +141,7 @@ paths:
           required: true
           schema:
             type: string
-          description: Bloomberg ticker to filter news content by.
+          description: Filter events to 1+ bloomberg tickers always including country codes with colon (comma-separated).
         - name: isin
           in: query
           required: false
