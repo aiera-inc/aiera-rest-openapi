@@ -73,7 +73,6 @@ paths:
               application/json:
                 schema:
                   $ref: "#/components/schemas/Error"        
-
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -87,7 +86,6 @@ components:
         trimmed_audio_url:
           type: string
           format: url
-
     Error:
       type: object
       required:
