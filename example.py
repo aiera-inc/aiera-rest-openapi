@@ -127,7 +127,7 @@ def create_openapi_tools():
         description= "Tool to retrieve filings and news content for specific equities or filters such as form number, date range, or ticker symbol. All the details should be displayed in the ouput result."
     )
 
-    transcrippeets_tool=Tool(
+    transcrippets_tool=Tool(
         name="Trabscrippets API",
         func=planner.create_openapi_agent(transcrippets_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
         description="Tool to retrieve a transcrippet url according to the parameters"
@@ -145,7 +145,7 @@ def create_openapi_tools():
         description="Tool for retrieving the field summaries from events. Use this only when specifically asked for summaries based on event filter, event_id, and summary_type. When asked to get summaries for a specific bloomberg ticker within a given date range call /summaries with the parameters as enetered by the user"
     )
 
-    return[events_tool, calendars_tool, speaker_tool, corporate_activities_tool, monitors_tool, topics_tool, equities_tool, contents_tool, transcrippeets_tool, tonalSentiment_tool, summaries_tool]
+    return[events_tool, calendars_tool, speaker_tool, corporate_activities_tool, monitors_tool, topics_tool, equities_tool, contents_tool, transcrippets_tool, tonalSentiment_tool, summaries_tool]
 
 
 def create_openapi_agent():
