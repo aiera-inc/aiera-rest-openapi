@@ -1,0 +1,300 @@
+openapi: 3.1.0
+info:
+  title: Aiera Events API
+  description: API for accessing events data from Aiera
+  version: 1.0.0
+servers:
+  - url: https://premium.aiera.com/api
+security:
+  - ApiKeyAuth: []
+paths:
+  /summaries:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getEventSummaries
+      description: Retrieves summaries based on the filter like bloomberg ticker, start date and end date.
+      summary: Retrieves a summary fo the event.
+      parameters:
+        - name: event_type
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+            description: Fetch events on or after this date (defaults to 2 weeks ago)
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: Fetch events on or before this date (defaults to 2 weeks from now)
+        - name: bloomberg_ticker
+          in: query
+          description: Filter events to 1+ bloomberg tickers always including country codes with colon (comma-separated).
+          required: true
+          schema:
+            type: string
+        - name: isin
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: ric   
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: permid
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: summary_type
+          in: query
+          required: false
+          schema:
+            type: string
+            default: zeroshot
+        - name: version
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+            maximum: 100
+        
+      responses:
+        "200":
+          description: An event object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Summaries"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /summaries/{event_id}:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getEventSummary
+      description: Retrieves a summary based on the event_id.
+      summary: Retrieves a summary for the event with event id.
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: An event object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetEventSummary"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    
+  /summaries/{event_id}/{summary_type}:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getEventSummaryByType
+      description: Retrieves a summary based on the event_id and event_type.
+      summary: Retrieves a summary for the event with event id and event type.
+      parameters:
+        - name: summary_type
+          in: path
+          required: true
+          schema:
+            type: string      
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: An event object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetEventSummary"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+
+  schemas:
+
+    GetEventSummary:
+    type: array
+    items:
+      $ref: "#/components/schemas/Summaries"
+
+    Summaries:
+      type: object 
+      properties:
+        events:
+          $ref: "#/components/schemas/Event"
+        summary:
+          $ref: "#/components/schemas/Summary"
+
+    Event:
+      type: object
+      required:
+        - event_id
+      properties:
+        event_id:
+          type: integer
+        equity_id:
+          type: integer
+        company_id:
+          type: integer
+        ticker:
+          type: string
+        local_ticker:
+          type: string
+        bloomberg_ticker:
+          type: string
+        ric:
+          type: string
+        permid:
+          type: string
+        exchange_mic:
+          type: string
+        isin:
+          type: string
+        primary_equity:
+          type: boolean
+        title:
+          type: string
+        event_type:
+          type: string
+        event_date:
+          type: string
+        has_unknown_time:
+          type: boolean
+        connection_expected:
+          type: boolean
+        is_live:
+          type: boolean
+        fiscal_year:
+          type: integer
+          description: fiscal year of the event
+        fiscal_quarter:
+          type: integer
+          description: fiscal quarter of the event
+        broadcase_url:
+          type: string
+        slides_url:
+          type: string
+        slides_url_type:
+          type: string
+        replay_url:
+          type: string
+        press_url:
+          type: string
+        press_url_type:
+          type: string          
+        public_url:
+          type: string
+        public_share_url:
+          type: string
+        transcription_status:
+          type: string
+        transcription_audio_url:
+          type: string
+        transcription_audio_offset_seconds:
+          type: integer
+        conference_pin:
+          type: string
+        conference_number:
+          type: string
+        has_transcripts:
+          type: boolean
+        has_pricing:
+          type: boolean
+        status:
+          type: string
+        created:
+          type: string
+        modified:
+          type: string
+    
+    Summary:
+      type: object
+      properties:
+        title:
+          type: string
+        summary:
+          type: array
+          items:
+            type: string
+        model:
+          type: string
+        type:
+          type: string
+        version:
+          type: string
+        audio_clip:
+          type: string
+        video_clip:
+          type: string
+        priority:
+          type: integer
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

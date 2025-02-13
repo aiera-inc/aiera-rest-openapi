@@ -1,0 +1,341 @@
+openapi: 3.1.0
+info:
+  title: Aiera Events API
+  description: API for accessing events data from Aiera
+  version: 1.0.0
+servers:
+  - url: https://premium.aiera.com/api
+security:
+  - ApiKeyAuth: []
+paths:
+  /topics/{topic_id}:
+    get:
+      operationId: getEvent
+      description: Retrieves an event using an event id.
+      summary: Retrieves a single event
+      parameters:
+        - name: topic_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Returns topic
+        - name: include_metrics
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+      responses:
+        "200":
+          description: An event object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Topics"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /topics:
+    get:
+      operationId: getTopics
+      description: Retrieves list of topics
+      summary: Retrieves a list of topics that match the parameters provided.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: search
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: An array of topic objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Topics"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /topics/from_equities:
+    get:
+      operationId: getTopics&Equities
+      description: Retrieves list of topics and equities
+      summary: Retrieves a list of topics and equities that match the parameters provided.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: search
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: An array of event objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EquityTopics"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /topics/from_events:
+    get:
+      operationId: getTopics&EventCount
+      description: Retrieves list of topics and events count
+      summary: Retrieves a list of topics and event counts that match the parameters provided.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: search
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: An array of event objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EventTopics"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /topics/{topic_id}/equities:
+    get:
+      operationId: getEquities
+      description: Retrieves list of equities for a topic by topic_id
+      summary: Retrieves a list of equities that match the parameters provided.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: topic_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Returns equities for a topic
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: An array of event objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EquityByTopicId"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /topics/{topic_id}/events:
+    get:
+      operationId: getEvents
+      description: Retrieves list of events for a topic by topic_id
+      summary: Retrieves a list of events that match the parameters provided.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: topic_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Returns events for a topic
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: An array of event objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EventsByTopicId"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  schemas:
+
+    Topics:
+      type: object
+      properties:
+        topic_id:
+          type: string
+        topic_name:
+          type: string
+
+    EquityTopics:
+      type: object
+      properties:
+        topic_id:
+          type: string
+        topic_name:
+          type: string
+        equity_count:
+          type: integer        
+
+    EventTopics:
+      type: object
+      properties:
+        topic_id:
+          type: string
+        topic_name:
+          type: string
+        event_count:
+          type: integer        
+
+    EquityByTopicId:
+      type: object
+      properties:
+        equity_id:
+          type: integer
+        local_ticker:
+          type: string
+        mic:
+          type: string
+        bloomberg_ticker:
+          type: string
+        isin:
+          type: string
+        gics_sector:
+          type: string
+        gics_sub_sector:
+          type: string
+
+    EventsByTopicId:
+      type: object
+      properties:
+        event_id:
+          type: integer
+        title:
+          type: string
+        event_type:
+          type: string
+        date:
+          type: string
+          format: date-time
+          example: "2024-10-31T23:59:59.999999"
+          pattern: '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}$'
+        equity:
+          type: object
+          properties:
+            equity_id:
+              type: integer
+            local_ticker:
+              type: string
+            bloomberg_ticker:
+              type: string
+            mic:
+              type: string
+            isin:
+              type: string
+            gics_sector:
+              type: string
+            gics_sub_sector:
+              type: string
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          

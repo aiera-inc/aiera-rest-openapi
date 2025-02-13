@@ -1,0 +1,280 @@
+openapi: 3.1.0
+info:
+  title: Aiera Events API
+  description: API for accessing events data from Aiera
+  version: 1.0.0
+servers:
+  - url: https://premium.aiera.com/api
+security:
+  - ApiKeyAuth: []
+paths:
+
+  /equities-v2/sectors:
+    get:
+      operationId: get sectors and sub-sectors
+      description: Retrieves sectors and subsectors
+      summary: Retrieves a list of sectors along with their subsectors.
+      security:
+        - ApiKeyAuth: [] 
+      responses:
+        "200":
+          description: An array of sector objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Sector"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+   
+  /equities-v2: 
+    get:  
+      operationId: getEquities
+      description: Retrieves a list of equities
+      summary: Retrieves a list of equities
+      security: 
+        - ApiKeyAuth: []
+      parameters:
+        - name: bloomberg_ticker
+          in: query
+          required: true
+          schema:
+            type: string
+          description:  Filter activities to 1+ bloomberg tickers always including country codes with colon (comma-separated).
+        - name: isin
+          in: query
+          schema:
+            type: string
+          description: ISIN (International Securities Identification Number) of the equity.
+        - name: ric
+          in: query
+          schema:
+            type: string
+          description: Reuters Instrument Code of the equity.
+        - name: ticker
+          in: query
+          schema:
+            type: string
+          description: Local ticker of the equity.
+        - name: permid
+          in: query
+          schema:
+            type: string
+          description: PermID of the equity.
+        - name: sector_id
+          in: query
+          schema:
+            type: integer
+          description: ID of the sector.
+        - name: subsector_id
+          in: query
+          schema:
+            type: integer
+          description: ID of the subsector.
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search term for equity names or tickers.
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination.
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            default: 100
+            maximum: 2500
+            minimum: 10
+          description: Number of records per page.
+        - name: include_inactive
+          in: query
+          schema:
+            type: boolean
+          description: Whether to include inactive equities.
+        - name: include_company_metadata
+          in: query
+          schema:
+            type: boolean
+            default: true
+
+          description: Whether to include associated company metadata.
+      responses:
+        '200':
+          description: A list of equities.
+          content:
+            application/json:
+              schema:
+                type: object
+                parameters:
+                  pagination:
+                    $ref: "#/components/schemas/Pagination"
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Equity"
+          default:
+            description: unexpected error
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Error"
+
+  /equities-v2/{equity_id}:
+    get:
+      operationId: get equity info by equity id
+      description: Retrieves equities by equity id
+      summary: Retrieves the appropriate equity by equity id.
+      security:
+        - ApiKeyAuth: [] 
+      parameters:
+        - name: equity_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the equity.
+        - name: include_company_metadata=true
+          in: query
+          schema:
+            type: boolean
+            default: true
+          description: Whether to include associated company metadata.
+      responses:
+        "200":
+          description: An array of equity objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Equity"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+ 
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  schemas:
+    Equity: 
+      type: object
+      properties:
+        equity_id:
+          type: integer
+        bloomberg_ticker:
+          type: string
+        name:
+          type: string
+        common_name:
+          type: string
+        ticker:
+          type: string
+        local_ticker:
+          type: string
+        mic:
+          type: string
+        isin:
+          type: string
+        permid:
+          type: string
+        sectoy_id:
+          type: integer
+        gics_sector:
+          type: string
+        subsector_id:
+          type: integer
+        gics_sub_sector:
+          type: string
+        primary_equity:
+          type: boolean
+        created:  
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        status:   
+          type: string
+        company_metadata:
+          type: object
+          properties:
+            company_id:
+              type: integer
+            company_name:
+              type: string
+            legal_name:
+              type: string
+            incorporated_country_code:
+              type: string
+            domiciled_country_code:
+              type: string
+            urls:
+              type: array
+              items:
+                url:
+                  type: string
+                url_type:
+                  type: string
+              
+    Pagination:
+      type: object
+      properties:
+        total_count:
+          type: integer
+        current_page:
+          type: integer
+        total_pages:
+          type: integer
+        page_size:
+          type: integer
+        
+    Sector:
+      type: object
+      properties:
+        sector_id:
+          type: integer
+        gics_code:
+          type: string
+        name:
+          type: string
+        subsectors:
+          type: array
+          items:
+            type: object
+            properties:
+              subsector_id:
+                type: integer
+              gics_code:
+                type: string
+              gics_industry_code: 
+                type: string
+              name:
+                type: string
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
