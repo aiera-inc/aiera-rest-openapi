@@ -114,14 +114,14 @@ paths:
             application/json:
               schema:
                 type: object
-                parameters:
+                properties:
                   pagination:
                     $ref: "#/components/schemas/Pagination"
                   data:
                     type: array
                     items:
                       $ref: "#/components/schemas/Equity"
-          default:
+        default:
             description: unexpected error
             content:
               application/json:
@@ -227,10 +227,12 @@ components:
             urls:
               type: array
               items:
-                url:
-                  type: string
-                url_type:
-                  type: string
+                type: object
+                properties:
+                  url:
+                    type: string
+                  url_type:
+                    type: string
               
     Pagination:
       type: object
