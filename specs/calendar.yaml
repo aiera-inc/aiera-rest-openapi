@@ -273,7 +273,7 @@ components:
           type: string
           format: date-time
         created:
-          Type: string
+          type: string
           format: date-time
         event_id:
           type: integer

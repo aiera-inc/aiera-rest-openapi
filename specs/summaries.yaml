@@ -165,9 +165,9 @@ components:
   schemas:
 
     GetEventSummary:
-    type: array
-    items:
-      $ref: "#/components/schemas/Summaries"
+      type: array
+      items:
+        $ref: "#/components/schemas/Summaries"
 
     Summaries:
       type: object 

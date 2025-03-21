@@ -60,13 +60,13 @@ paths:
           required: false
           description: Number of records to return, max 1000.
           schema:
-            type: integer
+            type: object
         - name: from_index
           in: query
           required: false
           description: Index to start returning results from.
           schema:
-            type: integer
+            type: object
       responses:
         "200":
           description: A list of corporate activities
@@ -108,7 +108,7 @@ paths:
           description: Roll up results to the company level.
           schema:
             type: boolean
-        - include_details:
+        - name: include_details
           in: query
           required: false
           description: Include detailed information about the equities.
@@ -248,14 +248,14 @@ paths:
           required: true
           description: Number of records to return, max 1000.
           schema:
-            type: integer
+            type: object
             default: 100
         - name: from_index
           in: query
           required: true
           description: Index to start returning results from.
           schema:
-            type: integer
+            type: object 
             default: 0
         - name: include_activity
           in: query
@@ -295,9 +295,9 @@ components:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/CorporateActivityDetails"
+            $ref: "#/components/schemas/CorporateActivityAuditItem"
 
-
+            
     CorporateCoverage:
       type: object
       properties:
@@ -313,31 +313,31 @@ components:
                   type: integer
                 gics_sectors:
                   type: object
-                  properties:
+                  additionalProperties:
                     type: integer
                   example:
                     "Consumer Discretionary": 1
                 gics_subsectors:
                   type: object
-                  properties:
+                  additionalProperties:
                     type: integer
                   example:
                     "Broadline Retail": 1
                 countries:
                   type: object
-                  properties:
+                  additionalProperties:
                     type: integer
                   example:
                     US: 1
                 regions:
                   type: object
-                  properties:
+                  additionalProperties:
                     type: integer
                   example:
                     Americas: 1
                 subregions:
                   type: object
-                  properties:
+                  additionalProperties:
                     type: integer
                   example:
                     North America: 1
@@ -444,9 +444,9 @@ components:
           type: object
           properties:
             contact:
-              "#/components/schemas/ContactDetails"
+              $ref: "#/components/schemas/ContactDetails"
             speakers:
-              type: String
+              type: string
             webcasts:
               type: array
               items:
@@ -487,11 +487,13 @@ components:
         audit:
           type: array
           items:
-            change_date:
-              type: string
-              format: date-time
-            change_type:  
-              type: string
+            type: object
+            properties:
+              change_date:
+                type: string
+                format: date-time
+              change_type:  
+                type: string
         created:
           type: string
           format: date-time
@@ -677,17 +679,17 @@ components:
             $ref: "#/components/schemas/CorporateActivityAuditItem"
 
     CorporateActivityAuditItem:
-    type: object
-    properties:
-      corporate_activity_id:
-        type: string
-      change_date:
-        type: string
-        format: date-time
-      change_type:
-        type: string
-      corporate_activity:
-        $ref: "#/components/schemas/CorporateActivityDetails"
+      type: object
+      properties:
+        corporate_activity_id:
+          type: string
+        change_date:
+          type: string
+          format: date-time
+        change_type:
+          type: string
+        corporate_activity:
+          $ref: "#/components/schemas/CorporateActivityDetails"
 
     Error:
       type: object

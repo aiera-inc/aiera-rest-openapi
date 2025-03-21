@@ -56,7 +56,6 @@ components:
                   type: string
                 abridged:
                   type: string
-                  nullable: true
             speakers:
               type: array
               items:
@@ -71,7 +70,6 @@ components:
               properties:
                 tonal:
                   type: number
-                  nullable: true
                 topics:
                   type: array
                   items:
@@ -104,7 +102,6 @@ components:
                   type: string
                 abridged:
                   type: string
-                  nullable: true
             speakers:
               type: array
               items:
