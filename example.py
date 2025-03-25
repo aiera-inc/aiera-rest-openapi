@@ -155,7 +155,7 @@ def create_openapi_agent():
     1. Events API: Tool to get Event Transcripts as a csv file,  retrieve an event using an event id, or to get a list of events that match the parameters provided
     2. Calendars API: Tool to get a list of calendar events filtered by equity, watchlist, or other parameters, to retrieve information about equities covered by the API and to retrieve details of a specific calendar event by its event ID
     3. Speakers API: Tool to retrieves a person's information using their person id.
-    4. Corporate Activities API: Tool to retrieve a list of corporate activities that match the parameters provided or the corporate activity id, the corporate activity coverage, and to retrive the audits for them. When asked about counts or numbers, return only the the count of results, formatted as a number
+    4. Corporate Activities API: Tool to retrieve a list of corporate activities that match the parameters provided or the corporate activity id, the corporate activity coverage, and to retrieve the audits for them. If asked to get the audit details call the GET /corporate-activity/audits api.  When asked about counts or numbers, return only the the count of results, formatted as a number
     5. Monitors API: Tool to retrieve a stream match using a dashboard guid and stream guid
     6. Topics API: Tool to retrieve info regarding topics
     7. Equities API: Tool to retrieve a list of sectors along with their subsectors, to retrieve a list of equities and to retrive equity info according to the equity id
@@ -165,10 +165,16 @@ def create_openapi_agent():
     11. Summaries API: Tool for retrieving the summaries attribute of an event. Use this only when specifically asked for summaries based on event filter, event_id, and summary_type. When asked to get summaries for a specific bloomberg ticker within a given date range call /summaries with the parameters as enetered by the user
     Follow these strict guidelines:
     For topic searches:
+
     1. IF the query contains "get topics" or "find topics" or "search topics":
        - ONLY use GET /topics?search=word
        - Return EXACT response
        - STOP IMMEDIATELY
+    
+    For corporate audit searches:
+    1. IF the query contains "get audit details" or "find audit details":
+       - ONLY use GET /corporate-activity/audits 
+       
     CRITICAL RULES:
     1. ONE API CALL ONLY - You must stop after making a single API call
     2. NO FOLLOW-UP CALLS - Never attempt additional queries
@@ -204,7 +210,6 @@ def create_openapi_agent():
     Remember: Your goal is to be efficient and precise, using only and only 1 API calls while providing accurate information
      You MUST STOP after the first API call, regardless of the results.
     CRITICAL: You must STOP after the first agent run. Do not make any additional calls regardless of the data received.
-    Example:
     """
 
 
