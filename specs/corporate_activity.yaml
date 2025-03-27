@@ -60,13 +60,13 @@ paths:
           required: false
           description: Number of records to return, max 1000.
           schema:
-            type: object
+            type: integer
         - name: from_index
           in: query
           required: false
           description: Index to start returning results from.
           schema:
-            type: object
+            type: integer
       responses:
         "200":
           description: A list of corporate activities
@@ -168,7 +168,7 @@ paths:
     get:
       security:
         - ApiKeyAuth: []
-      operationId: getCorporateActivityAuditTrail
+      operationId: getCorporateActivityAuditDetails
       summary: Retrieve corporate activity audit trails.
       description: Fetch audit logs for corporate activities.
       parameters:
@@ -578,94 +578,6 @@ components:
         exchange_mic:
           type: string
 
-    # EquitiesCoverage:
-    #   type: object
-    #   properties:
-    #     counts:
-    #       type: object
-    #       properties:
-    #         mapped:
-    #           type: object
-    #           properties:
-    #             companies:
-    #               type: integer
-    #             equities:
-    #               type: integer
-    #             gics_sectors:
-    #               type: object
-    #               additionalProperties:
-    #                 type: integer
-    #             gics_subsectors:
-    #               type: object
-    #               additionalProperties:
-    #                 type: integer
-    #             countries:
-    #               type: object
-    #               additionalProperties:
-    #                 type: integer
-    #             regions:
-    #               type: object
-    #               additionalProperties:
-    #                 type: integer
-    #             subregions:
-    #               type: object
-    #               additionalProperties:
-    #                 type: integer
-    #         unmapped:
-    #           type: object
-    #           properties:
-    #             listed:
-    #               type: integer
-    #             delisted:
-    #               type: integer
-    #     results:
-    #       type: object
-    #       properties:
-    #         mapped:
-    #           type: array
-    #           items:
-    #             type: object
-    #             properties:
-    #               company_id:
-    #                 type: integer
-    #               name:
-    #                 type: string
-    #               country:
-    #                 type: string
-    #               region:
-    #                 type: string
-    #               subregion:
-    #                 type: string
-    #               equities:
-    #                 type: array
-    #                 items:
-    #                   type: object
-    #                   properties:
-    #                     equity_id:
-    #                       type: integer
-    #                     bloomberg_ticker:
-    #                       type: string
-    #                     local_ticker:
-    #                       type: string
-    #                     ric:
-    #                       type: string
-    #                     isin:
-    #                       type: string
-    #                     cusip:
-    #                       type: string
-    #                     permid:
-    #                       type: string
-    #                     mic:
-    #                       type: string
-    #                     gics_sector:
-    #                       type: string
-    #                     gics_subsector:
-    #                       type: string
-    #         unmapped:
-    #           type: array
-    #           items:
-    #             type: object
-    
     CorporateActivityAudits:
       type: object
       properties:
