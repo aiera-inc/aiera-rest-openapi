@@ -73,6 +73,7 @@ paths:
               application/json:
                 schema:
                   $ref: "#/components/schemas/Error"        
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -80,12 +81,14 @@ components:
       in: header
       name: X-API-KEY
   schemas:
+
     Transcrippet:
       type: object
       properties:
         trimmed_audio_url:
           type: string
           format: url
+
     Error:
       type: object
       required:

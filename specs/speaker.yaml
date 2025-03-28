@@ -41,6 +41,7 @@ components:
       in: header
       name: X-API-KEY
   schemas:
+
     Person:
       type: object
       properties:
@@ -138,121 +139,6 @@ components:
                       type: number
                     minimum:
                       type: number
- 
- 
-    Event:
-      type: object
-      required:
-        - event_id
-      properties:
-        event_id:
-          type: integer
-        equity_id:
-          type: integer
-        company_id:
-          type: integer
-        ticker:
-          type: string
-        local_ticker:
-          type: string
-        bloomberg_ticker:
-          type: string
-        ric:
-          type: string
-        permid:
-          type: string
-        exchange_mic:
-          type: string
-        isin:
-          type: string
-        primary_equity:
-          type: boolean
-        title:
-          type: string
-        event_type:
-          type: string
-        event_date:
-          type: string
-        has_unknown_time:
-          type: boolean
-        connection_expected:
-          type: boolean
-        is_live:
-          type: boolean
-        fiscal_year:
-          type: integer
-          description: fiscal year of the event
-        fiscal_quarter:
-          type: integer
-          description: fiscal quarter of the event
-        broadcase_url:
-          type: string
-        replay_url:
-          type: string
-        press_url:
-          type: string
-        public_url:
-          type: string
-        transcription_status:
-          type: string
-        transcription_audio_url:
-          type: string
-        transcription_audio_offset_seconds:
-          type: integer
-        audio_stream_url:
-          type: string
-        has_transcripts:
-          type: boolean
-        has_pricing:
-          type: boolean
-        metrics:
-          type: object
-          properties:
-            sentiment:
-              type: number
-            rawSentiment:
-              type: number
-        grouping:
-          type: object
-          properties:
-            grouping_id:
-              type: integer
-            grouping_name:
-              type: string
-        status:
-          type: string
-        created:
-          type: string
-        modified:
-          type: string
-        linguistics:
-          type: object
-          properties:
-            summary:
-              description: Summary of the event
-              type: array
-              items:
-                type: object
-                properties:
-                  title:
-                    type: string
-                  summary:
-                    type: array
-                    description: Summary segments of the event
-                    items:
-                      type: string
-            topics:
-              type: array
-              items:
-                type: object
-                properties:
-                  topic_id:
-                    type: integer
-                  topic:
-                    type: string
-                  priority:
-                    type: integer
-
     Error:
       type: object
       required:

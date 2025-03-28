@@ -278,6 +278,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -602,6 +603,7 @@ components:
           type: string
         corporate_activity:
           $ref: "#/components/schemas/CorporateActivityDetails"
+
 
     Error:
       type: object

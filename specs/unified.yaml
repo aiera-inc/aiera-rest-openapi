@@ -1,0 +1,2586 @@
+openapi: 3.1.0
+info:
+  title: Aiera Calendars API
+  description: API for accessing calendar data from Aiera
+  version: 1.0.0
+servers:
+  - url: https://premium.aiera.com/api
+security:
+  - ApiKeyAuth: []
+paths:
+  /transcrippets:
+    get:
+        security:
+          - ApiKeyAuth: []
+        operationId: getEventTranscripts
+        description: Retrieves a transcrippet url.
+        summary: Retrieves a transcrippet url according to the parameters.
+        parameters:
+          - name: transcrippet_id
+            in: query
+            required: false
+            schema:
+              type: integer
+            description: ID of the transcrippet.
+          - name: event_id
+            in: query
+            required: false
+            schema:
+              type: integer
+            description: ID of the event.
+          - name: equity_id
+            in: query
+            required: false
+            schema:
+              type: integer
+            description: ID of the equity.
+          - name: speaker_id  
+            in: query
+            required: false
+            schema:
+              type: integer
+            description: ID of the speaker.
+          - name : transcript_item_id
+            in: query
+            required: false
+            schema:
+              type: integer
+            description: ID of the transcript item.
+          - name: created_start_date
+            in: query
+            required: false
+            schema:
+              type: string
+            description: Fetch events on or after this date (defaults to 2 weeks ago)
+          - name: created_end_date  
+            in: query
+            required: false
+            schema:
+              type: string
+            description: Fetch events on or before this date (defaults to 2 weeks from now)
+        responses:
+          "200":
+            description: Successfully retrieved the transcrippets
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Transcrippet"
+          "default":
+            description: unexpected error
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Error"        
+
+  /topics/{topic_id}:
+    get:
+      operationId: getEvent
+      description: Retrieves an event using an event id.
+      summary: Retrieves a single event
+      parameters:
+        - name: topic_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Returns topic
+        - name: include_metrics
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+      responses:
+        "200":
+          description: An event object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Topics"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /topics:
+    get:
+      operationId: getTopics
+      description: Retrieves list of topics
+      summary: Retrieves a list of topics that match the parameters provided.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: search
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: An array of topic objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Topics"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /topics/from_equities:
+    get:
+      operationId: getTopics&Equities
+      description: Retrieves list of topics and equities
+      summary: Retrieves a list of topics and equities that match the parameters provided.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: search
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: An array of event objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EquityTopics"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /topics/from_events:
+    get:
+      operationId: getTopics&EventCount
+      description: Retrieves list of topics and events count
+      summary: Retrieves a list of topics and event counts that match the parameters provided.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: search
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: An array of event objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EventTopics"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /topics/{topic_id}/equities:
+    get:
+      operationId: getEquities
+      description: Retrieves list of equities for a topic by topic_id
+      summary: Retrieves a list of equities that match the parameters provided.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: topic_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Returns equities for a topic
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: An array of event objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EquityByTopicId"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /topics/{topic_id}/events:
+    get:
+      operationId: getEvents
+      description: Retrieves list of events for a topic by topic_id
+      summary: Retrieves a list of events that match the parameters provided.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: topic_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Returns events for a topic
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: An array of event objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EventsByTopicId"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /events-v2/tonal/export/csv:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getTonalSentiments
+      description: Export tonal sentiment to csv. .
+      summary: Retrieves a csv file of a tonal sentiment.
+      parameters:
+        - name: bloomberg_ticker
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter events to 1+ bloomberg tickers always including country codes with colon (comma-separated).
+      
+      responses:
+        "200":
+          description: Successfully uploaded the csv file.
+          content:
+            application/csv:
+              schema:
+                type: string
+                format: binary
+          headers:
+            content-disposition:
+              schema:
+                type: string
+                description: Used only with `application/pdf` responses
+                example: attachment; filename="name.pdf"
+            content-encoding:
+              schema:
+                type: string
+                description: Encoding of the file.
+
+  /equities-v2/sectors:
+    get:
+      operationId: get sectors and sub-sectors
+      description: Retrieves sectors and subsectors
+      summary: Retrieves a list of sectors along with their subsectors.
+      security:
+        - ApiKeyAuth: [] 
+      responses:
+        "200":
+          description: An array of sector objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Sector"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+   
+  /equities-v2: 
+    get:  
+      operationId: getEquities
+      description: Retrieves a list of equities
+      summary: Retrieves a list of equities
+      security: 
+        - ApiKeyAuth: []
+      parameters:
+        - name: bloomberg_ticker
+          in: query
+          required: true
+          schema:
+            type: string
+          description:  Filter activities to 1+ bloomberg tickers always including country codes with colon (comma-separated).
+        - name: isin
+          in: query
+          schema:
+            type: string
+          description: ISIN (International Securities Identification Number) of the equity.
+        - name: ric
+          in: query
+          schema:
+            type: string
+          description: Reuters Instrument Code of the equity.
+        - name: ticker
+          in: query
+          schema:
+            type: string
+          description: Local ticker of the equity.
+        - name: permid
+          in: query
+          schema:
+            type: string
+          description: PermID of the equity.
+        - name: sector_id
+          in: query
+          schema:
+            type: integer
+          description: ID of the sector.
+        - name: subsector_id
+          in: query
+          schema:
+            type: integer
+          description: ID of the subsector.
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search term for equity names or tickers.
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination.
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            default: 100
+            maximum: 2500
+            minimum: 10
+          description: Number of records per page.
+        - name: include_inactive
+          in: query
+          schema:
+            type: boolean
+          description: Whether to include inactive equities.
+        - name: include_company_metadata
+          in: query
+          schema:
+            type: boolean
+            default: true
+
+          description: Whether to include associated company metadata.
+      responses:
+        '200':
+          description: A list of equities.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pagination:
+                    $ref: "#/components/schemas/Pagination"
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Equity2"
+        default:
+            description: unexpected error
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Error"
+
+  /equities-v2/{equity_id}:
+    get:
+      operationId: get equity info by equity id
+      description: Retrieves equities by equity id
+      summary: Retrieves the appropriate equity by equity id.
+      security:
+        - ApiKeyAuth: [] 
+      parameters:
+        - name: equity_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the equity.
+        - name: include_company_metadata=true
+          in: query
+          schema:
+            type: boolean
+            default: true
+          description: Whether to include associated company metadata.
+      responses:
+        "200":
+          description: An array of equity objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Equity2"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+ 
+  /corporate-activity:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getCorporateActivity
+      summary: Retrieve corporate activities.
+      description: Fetch corporate activity data based on various filters.
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          description: Fetch events on or after this date (defaults to 2 weeks ago)
+          schema:
+            type: string
+            format: date-time
+        - name: end_date
+          in: query
+          required: true
+          description: Fetch events on or before this date (defaults to 2 weeks afrom now)
+          schema:
+            type: string
+            format: date-time
+        - name: modified_since
+          in: query
+          required: false
+          description: Return activities modified since this date.
+          schema:
+            type: string
+            format: date-time
+        - name: activity_type
+          in: query
+          required: false
+          description: Filter by activity type (e.g., earnings, presentation).
+          schema:
+            type: string
+        - name: activity_subtype
+          in: query
+          required: false
+          description: Filter by activity subtype.
+          schema:
+            type: string
+        - name: bloomberg_ticker
+          in: query
+          required: true
+          description: Filter activities to 1+ bloomberg tickers always including country codes with colon (comma-separated).
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          description: Number of records to return, max 1000.
+          schema:
+            type: integer
+        - name: from_index
+          in: query
+          required: false
+          description: Index to start returning results from.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: A list of corporate activities
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorporateActivities"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /corporate-activity/coverage:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getCorporateActivityCoverage
+      summary: Retrieve equities coverage.
+      description: Retrieve details of equities covered by the corporate activity API.
+      parameters:
+        - name: bloomberg_ticker
+          in: query
+          required: true
+          description: Fetch events on or after this date (defaults to 2 weeks ago)
+          schema:
+            type: string
+            default: ALL
+        - name: isin
+          in: query
+          required: false
+          description: Filter by ISIN.
+          schema:
+            type: string
+        - name: company_rollup
+          in: query
+          required: false
+          description: Roll up results to the company level.
+          schema:
+            type: boolean
+        - name: include_details
+          in: query
+          required: false
+          description: Include detailed information about the equities.
+          schema:
+            type: boolean
+            default: true
+      responses:
+        "200":
+          description: Details of covered equities.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorporateCoverage"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /corporate-activity/{corporate_activity_id}:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getCorporateActivityById
+      summary: Retrieve corporate activity by ID.
+      description: Fetch details of a specific corporate activity by its ID.
+      parameters:
+        - name: corporate_activity_id
+          in: path
+          required: true
+          description: The unique identifier of the corporate activity.
+          schema:
+            type: string
+        - name: include_details
+          in: query
+          required: false
+          description: Include detailed information about the corporate activity.
+          schema:
+            type: boolean
+            default: true
+      responses:
+        "200":
+          description: Corporate activity details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorporateActivityDetails"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /corporate-activity/audits:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getCorporateActivityAuditDetails
+      summary: Retrieve corporate activity audit trails.
+      description: Fetch audit logs for corporate activities.
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          description: Filter audits starting from this date.
+          schema:
+            type: string
+            format: date-time  26 x 7
+            default: datetime.date.today() - datetime.timedelta(days=182)
+        - name: end_date
+          in: query
+          required: true
+          description: Filter audits up to this date.
+          schema:
+            type: string
+            format: date-time
+            default: datetime.date.today() + datetime.timedelta(days=182)
+        - name: modified_since
+          in: query
+          required: false
+          description: Return audits modified since this date.
+          schema:
+            type: string
+            format: date-time
+        - name: bloomberg_ticker
+          in: query
+          required: true
+          description: Filter audits by Bloomberg ticker.
+          schema:
+            type: string
+        - name: isin
+          in: query
+          required: false
+          description: Filter audits by ISIN.
+          schema:
+            type: string
+        - name: cusip
+          in: query
+          required: false
+          description: Filter audits by CUSIP.
+          schema:
+            type: string
+        - name: ric
+          in: query
+          required: false
+          description: Filter audits by Reuters/Refinitiv RIC.
+          schema:
+            type: string
+        - name: permid
+          in: query
+          required: false
+          description: Filter audits by PermID.
+          schema:
+            type: string
+        - name: watchlist_id
+          in: query
+          required: false
+          description: Filter audits by watchlist ID.
+          schema:
+            type: string
+        - name: activity_type
+          in: query
+          required: false
+          description: Filter by activity type.
+          schema:
+            type: string
+        - name: activity_subtype
+          in: query
+          required: false
+          description: Filter by activity subtype.
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: true
+          description: Number of records to return, max 1000.
+          schema:
+            type: object
+            default: 100
+        - name: from_index
+          in: query
+          required: true
+          description: Index to start returning results from.
+          schema:
+            type: object 
+            default: 0
+        - name: include_activity
+          in: query
+          required: false
+          description: Include detailed information about the corporate activity.
+          schema:
+            type: boolean
+            default: true 
+      responses:
+        "200":
+          description: A list of corporate activity audits.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorporateActivityAudits"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /content/filings:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getFilings
+      description:  Retrieves filings content for specific equities or filters such as form number, date range, or ticker symbol.
+        You can provide a `bloomberg_ticker` (e.g., "AMZN:US"), `start_date`, `end_date` to filter filings within
+        a specific date range for a specific equity.
+      summary: Retrieves filings content according to parameters.
+      parameters:
+        - name: form_number
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Form number to filter filings content by.
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: Fetch events on or after this date (defaults to 2 weeks ago) (YYYY-MM-DD)
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: Fetch events on or before this date (defaults to 2 weeks later) (YYYY-MM-DD)
+        - name: bloomberg_ticker
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Filter events to 1+ bloomberg tickers always including country codes with colon (comma-separated).
+        - name: isin
+          in: query
+          required: false
+          schema:
+            type: string
+          description: ISIN to filter filings content by.
+        - name: ric
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Reuters/Refinitiv RIC to filter filings content by.
+        - name: permid
+          in: query
+          required: false
+          schema:
+            type: string
+          description: PermID to filter filings content by.
+        - name: ticker
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Ticker symbol to filter filings content by.
+        - name: from_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Return items with an ID greater than this.
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+          description: Starting index for pagination.
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 100
+            maximum: 100
+          description: Number of items to return (maximum 100).
+      responses:
+        "200":
+          description: Successfully retrieved filings content.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Filings"
+        default:
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /content/news:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getNews
+      description: Retrieves news content for specific equities or filters such as form number, date range, or ticker symbol.
+        You can provide a `bloomberg_ticker` (e.g., "AMZN:US"), `start_date`,  `end_date` and `news_source_id` to filter news within
+        a specific date range for a specific equity.
+      summary: Retrieves news content by equity.
+      parameters:
+        - name: news_source_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Return items with an ID greater than this.
+        - name: start_date
+          in: query
+          required: true
+          description: Fetch events on or after this date (defaults to 2 weeks ago)
+          schema:
+            type: string
+            format: date-time
+        - name: end_date
+          in: query
+          required: true
+          description:  Fetch events on or before this date (defaults to 2 weeks from now)
+          schema:
+            type: string
+            format: date-time
+        - name: bloomberg_ticker
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Filter events to 1+ bloomberg tickers always including country codes with colon (comma-separated).
+        - name: isin
+          in: query
+          required: false
+          schema:
+            type: string
+          description: ISIN to filter news content by.
+        - name: ric
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Reuters/Refinitiv RIC to filter news content by.
+        - name: permid
+          in: query
+          required: false
+          schema:
+            type: string
+          description: PermID to filter news content by.
+        - name: ticker
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Ticker symbol to filter news content by.
+        - name: from_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Return items with an ID greater than this.
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+          description: Starting index for pagination.
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 100
+            maximum: 100
+          description: Number of items to return (maximum 100).
+      responses:
+        "200":
+          description: Successfully retrieved news content.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/News"
+        default:
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /calendar:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getCalendar
+      summary: Retrieves a calendar object.
+      description: Fetch calendar events filtered by equity, watchlist, or other parameters.
+      parameters:
+        - name: modified_since
+          in: query
+          required: false
+          description: Returns events modified since this date.
+          schema:
+            type: string
+            format: date-time
+            example: "2024-10-31T23:59:59.999999"
+        - name: event_type
+          in: query
+          required: false
+          description: Filter by event type.
+          schema:
+            type: string
+            default: earnings
+        - name: start_date
+          in: query
+          description: Fetch events on or after this date (defaults to 2 weeks ago)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: end_date
+          in: query
+          description: Fetch events on or before this date (defaults to 2 weeks from now)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: bloomberg_ticker
+          in: query
+          required: true
+          description: Filter events to 1+ bloomberg tickers always including country codes with colon (comma-separated).
+          schema:
+            type: string
+        - name: isin
+          in: query
+          required: false
+          description: Filter events to ISINs (comma-separated).
+          schema:
+            type: string
+        - name: permid
+          in: query
+          required: false
+          description: Filter events to PermID identifiers (comma-separated).
+          schema:
+            type: string
+        - name: ric
+          in: query
+          required: false
+          description: Filter events to Reuters RICs (comma-separated).
+          schema:
+            type: string
+        - name: ticker
+          in: query
+          required: false
+          description: Filter events to local tickers (comma-separated).
+          schema:
+            type: string
+        - name: watchlist_id
+          in: query
+          required: false
+          description: Filter events to watchlist IDs (comma-separated).
+          schema:
+            type: integer
+        - name: company_rollup
+          in: query
+          required: false
+          description: Whether to roll up matches to the company entity.
+          schema:
+            type: boolean
+        - name: include_deleted
+          in: query
+          required: false
+          description: Whether to include deleted event records.
+          schema:
+            type: boolean
+        - name: include_private
+          in: query
+          required: false
+          description: Whether to include private events.
+          schema:
+            type: boolean
+        - name: from_index
+          in: query
+          required: false
+          description: Index to start returning results from.
+          schema:
+            type: integer
+        - name: size
+          in: query
+          required: false
+          description: Number of events to return, max 1000.
+          schema:
+            type: integer
+        - name: sort_key
+          in: query
+          required: false
+          description: Sort results by event_id_asc, event_id_desc, event_date_asc (default), or event_date_desc.
+          schema:
+            type: string
+      
+      responses:
+        "200":
+          description: A calendar object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Calendar"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /calendar/coverage:
+    get:
+      summary: Get Equities Coverage
+      description: Retrieve information about equities covered by the API.
+      operationId: getCalendarCoverage
+      parameters:
+        - name: bloomberg_ticker
+          in: query
+          description: Filter events to 1+ bloomberg tickers always including country codes with colon (comma-separated).
+          required: false
+          schema:
+            type: string
+        - name: isin
+          in: query
+          description: ISIN filter.
+          required: false
+          schema:
+            type: string
+        - name: cusip
+          in: query
+          description: CUSIP filter.
+          required: false
+          schema:
+            type: string
+        - name: ric
+          in: query
+          description: Reuters/Refinitiv RIC filter.
+          required: false
+          schema:
+            type: string
+        - name: ticker
+          in: query
+          description: Ticker filter.
+          required: false
+          schema:
+            type: string
+        - name: permid
+          in: query
+          description: PermID filter.
+          required: false
+          schema:
+            type: string
+        - name: watchlist_id
+          in: query
+          description: Watchlist ID filter.
+          required: false
+          schema:
+            type: integer
+        - name: company_rollup
+          in: query
+          description: Rollup to all company equities.
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Equities coverage details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  counts:
+                    type: object
+                  results:
+                    type: object
+
+  /calendar/{event_id}:
+    get:
+      summary: Get Calendar Event by ID
+      operationId: getCalendarById
+      description: Retrieve details of a specific calendar event by its ID.
+      parameters:
+        - name: event_id
+          in: path
+          description: The unique identifier of the event.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Calendar event details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventDetails"
+
+  /events/audio/transcript/csv:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getEventTranscripts
+      description: Retrieves a csv file of the event transcript.
+      summary: Retrieves a csv file of a event transcript.
+      parameters:
+        - name: event_ids
+          in: query
+          required: true
+          schema:
+            type: string
+          description: ID of the event.
+      responses:
+        "200":
+          description: Successfully uploaded the csv file.
+          content:
+            application/csv:
+              schema:
+                type: string
+                format: binary
+          headers:
+            content-disposition:
+              schema:
+                type: string
+                description: Used only with `application/pdf` responses
+                example: attachment; filename="name.pdf"
+            content-encoding:
+              schema:
+                type: string
+                description: Encoding of the file.
+
+  /events/{event_id}:
+    get:
+      operationId: getEvent
+      description: Retrieves an event using an event id.
+      summary: Retrieves a single event
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Returns event
+        - name: pricing
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+          description: Whether to return pricing information for the event.
+        - name: linguistics
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+          description: Whether to return summary of the event.
+      responses:
+        "200":
+          description: An event object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Events"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /events:
+    get:
+      operationId: getEvents
+      description: Retrieves a events that match the parameters provided.
+      summary: Retrieves a list of events that match the parameters provided.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: modified_since
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Returns events modified since this date
+        - name: bloomberg_ticker
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Filter events to 1+ bloomberg tickers always including country codes with colon (comma-separated).
+        - name: event_type
+          in: query
+          required: false
+          schema:
+            type: string
+            default: earnings
+          description: Event type, must be earnings
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Fetch events on or after this date (defaults to 2 weeks ago)
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Fetch events on or before this date (defaults to 2 weeks from now)
+      responses:
+        "200":
+          description: An array of event objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Events"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /dashboards/{dashboard_guid}/streams/{stream_guid}/matches:
+    get:
+      operationId: getMatch
+      description: Retrieves a stream match using a dashboard guid and stream guid.
+      summary: Retrieves a single match
+      parameters:
+        - name: dashboard_guid
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Returns match
+        - name: stream_guid
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Returns match
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Fetch events on or after this date (defaults to 2 weeks ago)
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Fetch events on or before this date (defaults to 2 weeks from now)
+        - name: linguistics
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+          description: Whether to return summary of the event.
+        - name: collapse
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+          description: Whether to collapse the match
+        - name: collapse_size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 5
+          description: Number of matches to collapse
+        - name: next_page_token
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Token to fetch the next page of matches
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Index to start fetching matches from
+        - name: size  
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Number of matches to return
+      responses:
+        "200":
+          description: A match object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Match"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /events-v2/person/{person_id}:
+    get:
+      operationId: getPerson
+      description: Retrieves a person using a person id.
+      summary: Retrieves a single person
+      parameters:
+        - name: person_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: person id to get the speaker details
+      responses:
+        "200":
+          description: Successfully retrieved the person details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person'
+        "404":
+          description: Person not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /summaries:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getEventSummaries
+      description: Retrieves summaries based on the filter like bloomberg ticker, start date and end date.
+      summary: Retrieves a summary fo the event.
+      parameters:
+        - name: event_type
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+            description: Fetch events on or after this date (defaults to 2 weeks ago)
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: Fetch events on or before this date (defaults to 2 weeks from now)
+        - name: bloomberg_ticker
+          in: query
+          description: Filter events to 1+ bloomberg tickers always including country codes with colon (comma-separated).
+          required: true
+          schema:
+            type: string
+        - name: isin
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: ric   
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: permid
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: summary_type
+          in: query
+          required: false
+          schema:
+            type: string
+            default: zeroshot
+        - name: version
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: from_index
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+            maximum: 100
+        
+      responses:
+        "200":
+          description: An event object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Summaries"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /summaries/{event_id}:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getEventSummary
+      description: Retrieves a summary based on the event_id.
+      summary: Retrieves a summary for the event with event id.
+      parameters:
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: An event object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetEventSummary"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    
+  /summaries/{event_id}/{summary_type}:
+    get:
+      security:
+        - ApiKeyAuth: []
+      operationId: getEventSummaryByType
+      description: Retrieves a summary based on the event_id and event_type.
+      summary: Retrieves a summary for the event with event id and event type.
+      parameters:
+        - name: summary_type
+          in: path
+          required: true
+          schema:
+            type: string      
+        - name: event_id
+          in: path
+          required: true
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: An event object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetEventSummary"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  schemas:
+
+    GetEventSummary:
+      type: array
+      items:
+        $ref: "#/components/schemas/Summaries"
+
+    Summaries:
+      type: object 
+      properties:
+        events:
+          $ref: "#/components/schemas/Event3"
+        summary:
+          $ref: "#/components/schemas/Summary"
+
+    Event3:
+      type: object
+      required:
+        - event_id
+      properties:
+        event_id:
+          type: integer
+        equity_id:
+          type: integer
+        company_id:
+          type: integer
+        ticker:
+          type: string
+        local_ticker:
+          type: string
+        bloomberg_ticker:
+          type: string
+        ric:
+          type: string
+        permid:
+          type: string
+        exchange_mic:
+          type: string
+        isin:
+          type: string
+        primary_equity:
+          type: boolean
+        title:
+          type: string
+        event_type:
+          type: string
+        event_date:
+          type: string
+        has_unknown_time:
+          type: boolean
+        connection_expected:
+          type: boolean
+        is_live:
+          type: boolean
+        fiscal_year:
+          type: integer
+          description: fiscal year of the event
+        fiscal_quarter:
+          type: integer
+          description: fiscal quarter of the event
+        broadcase_url:
+          type: string
+        slides_url:
+          type: string
+        slides_url_type:
+          type: string
+        replay_url:
+          type: string
+        press_url:
+          type: string
+        press_url_type:
+          type: string          
+        public_url:
+          type: string
+        public_share_url:
+          type: string
+        transcription_status:
+          type: string
+        transcription_audio_url:
+          type: string
+        transcription_audio_offset_seconds:
+          type: integer
+        conference_pin:
+          type: string
+        conference_number:
+          type: string
+        has_transcripts:
+          type: boolean
+        has_pricing:
+          type: boolean
+        status:
+          type: string
+        created:
+          type: string
+        modified:
+          type: string
+    
+    Summary:
+      type: object
+      properties:
+        title:
+          type: string
+        summary:
+          type: array
+          items:
+            type: string
+        model:
+          type: string
+        type:
+          type: string
+        version:
+          type: string
+        audio_clip:
+          type: string
+        video_clip:
+          type: string
+        priority:
+          type: integer
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+
+    Person:
+      type: object
+      properties:
+        event_id:
+          type: integer
+        question:
+          type: object
+          properties:
+            summary:
+              type: object
+              properties:
+                extract:
+                  type: string
+                abridged:
+                  type: string
+            speakers:
+              type: array
+              items:
+                type: object
+                properties:
+                  person_id:
+                    type: integer
+                  speaker_name:
+                    type: string
+            linguistics:
+              type: object
+              properties:
+                tonal:
+                  type: number
+                topics:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      topic:
+                        type: string
+                      position:
+                        type: integer
+                      topic_id:
+                        type: integer
+                sentiments:
+                  type: object
+                  properties:
+                    median:
+                      type: number
+                    average:
+                      type: number
+                    maximum:
+                      type: number
+                    minimum:
+                      type: number
+        answer:
+          type: object
+          properties:
+            summary:
+              type: object
+              properties:
+                extract:
+                  type: string
+                abridged:
+                  type: string
+            speakers:
+              type: array
+              items:
+                type: object
+                properties:
+                  person_id:
+                    type: integer
+                  speaker_name:
+                    type: string
+            linguistics:
+              type: object
+              properties:
+                tonal:
+                  type: number
+                topics:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      topic:
+                        type: string
+                      position:
+                        type: integer
+                      topic_id:
+                        type: integer
+                sentiments:
+                  type: object
+                  properties:
+                    median:
+                      type: number
+                    average:
+                      type: number
+                    maximum:
+                      type: number
+                    minimum:
+                      type: number
+
+    Match: 
+      type: object
+      properties:
+        total:
+          type: integer
+        size:
+          type: integer
+        next_page_token:
+          type: string
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              highlights:
+                type: array
+                items:
+                  type: string
+              Event:
+                type: object
+                properties:
+                  event_id:
+                    type: integer
+                  event_type:
+                    type: string
+                  date:
+                    type: string
+                    format: date-time
+                  title:
+                    type: string
+                  equity:
+                    type: object
+                    properties:
+                      equity_id:
+                        type: integer
+                      ticker:
+                        type: string
+                      bloomberg_ticker:
+                        type: string
+                      mic:
+                        type: string
+                      isin:
+                        type: string
+                      gics_sector:
+                        type: string
+                      gics_sub_sector:
+                        type: string
+
+    Events:
+      type: object
+      required:
+        - event_id
+      properties:
+        event_id:
+          type: integer
+        equity_id:
+          type: integer
+        company_id:
+          type: integer
+        ticker:
+          type: string
+        local_ticker:
+          type: string
+        bloomberg_ticker:
+          type: string
+        ric:
+          type: string
+        permid:
+          type: string
+        exchange_mic:
+          type: string
+        isin:
+          type: string
+        primary_equity:
+          type: boolean
+        title:
+          type: string
+        event_type:
+          type: string
+        event_date:
+          type: string
+        has_unknown_time:
+          type: boolean
+        connection_expected:
+          type: boolean
+        is_live:
+          type: boolean
+        fiscal_year:
+          type: integer
+          description: fiscal year of the event
+        fiscal_quarter:
+          type: integer
+          description: fiscal quarter of the event
+        broadcase_url:
+          type: string
+        replay_url:
+          type: string
+        press_url:
+          type: string
+        public_url:
+          type: string
+        transcription_status:
+          type: string
+        transcription_audio_url:
+          type: string
+        transcription_audio_offset_seconds:
+          type: integer
+        audio_stream_url:
+          type: string
+        has_transcripts:
+          type: boolean
+        has_pricing:
+          type: boolean
+        metrics:
+          type: object
+          properties:
+            sentiment:
+              type: number
+            rawSentiment:
+              type: number
+        grouping:
+          type: object
+          properties:
+            grouping_id:
+              type: integer
+            grouping_name:
+              type: string
+        status:
+          type: string
+        created:
+          type: string
+        modified:
+          type: string
+        linguistics:
+          type: object
+          properties:
+            summary:
+              description: Summary of the event
+              type: array
+              items:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  summary:
+                    type: array
+                    description: Summary segments of the event
+                    items:
+                      type: string
+            topics:
+              type: array
+              items:
+                type: object
+                properties:
+                  topic_id:
+                    type: integer
+                  topic:
+                    type: string
+                  priority:
+                    type: integer
+
+    Filings:
+      type: object
+      properties:
+        content_id:
+          type: integer
+        title:
+          type: string
+        published_date:
+          type: string
+          format: date-time
+        form_number:
+          type: string
+        filing_organization:
+          type: string
+        is_amendment:
+          type: boolean
+        period_end_date:
+          type: string
+          format: date-time
+        release_date:
+          type: string
+          format: date-time
+        arrival_date:
+          type: string
+          format: date-time
+        pulled_date:
+          type: string
+          format: date-time
+        pdf_url:
+          type: string
+        url:
+          type: string
+
+    News: 
+      type: object
+      properties:
+        content_id:
+          type: integer
+        title:
+          type: string
+        news_source_id:
+          type: integer
+        news_source:
+          type: string
+        published_date:
+          type: string
+          format: date-time
+        url:
+          type: string
+
+    Calendar:
+      type: object
+      properties:
+        params:
+          type: object
+        count:
+          type: integer
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/Event"
+
+    Event:
+      type: object
+      properties:
+        event_id:
+          type: integer
+        event_title:
+          type: string
+        event_type:
+          type: string
+        event_date:
+          type: string
+          format: date-time
+          example: "2024-10-31T23:59:59.999999"
+          pattern: '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}$'
+        equity:
+          type: object
+          properties:
+            equity_id:
+              type: integer
+            local_ticker:
+              type: string
+            bloomberg_ticker:
+              type: string
+            ric:
+              type: string
+            permid:
+              type: string
+            isin:
+              type: string
+            exchange_mic:
+              type: string
+
+    EventDetails:
+      type: object
+      properties:
+        modified:
+          type: string
+          format: date-time
+        created:
+          type: string
+          format: date-time
+        event_id:
+          type: integer
+        event_title:
+          type: string
+        event_type:
+          type: string
+        event_date:
+          type: string
+          format: date-time
+        equity:
+          $ref: "#/components/schemas/Event"
+        broadcast_url:
+          type: string
+        replay_url:
+          type: string
+        conference_number:
+          type: string
+        conference_pin:
+          type: string
+        slides_url:
+          type: string
+        press_url:
+          type: string
+        transcription_audio_url:
+          type: string
+
+    CorporateActivities:
+      type: object
+      properties:
+        params:
+          type: object
+        count:
+          type: integer
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CorporateActivityAuditItem"
+           
+    CorporateCoverage:
+      type: object
+      properties:
+        counts:
+          type: object
+          properties:
+            mapped:
+              type: object
+              properties:
+                companies:
+                  type: integer
+                equities:
+                  type: integer
+                gics_sectors:
+                  type: object
+                  additionalProperties:
+                    type: integer
+                  example:
+                    "Consumer Discretionary": 1
+                gics_subsectors:
+                  type: object
+                  additionalProperties:
+                    type: integer
+                  example:
+                    "Broadline Retail": 1
+                countries:
+                  type: object
+                  additionalProperties:
+                    type: integer
+                  example:
+                    US: 1
+                regions:
+                  type: object
+                  additionalProperties:
+                    type: integer
+                  example:
+                    Americas: 1
+                subregions:
+                  type: object
+                  additionalProperties:
+                    type: integer
+                  example:
+                    North America: 1
+            unmapped:
+              type: object
+              properties:
+                listed:
+                  type: integer
+                delisted:
+                  type: integer
+        results:
+          type: object
+          properties:
+            mapped:
+              type: array
+              items:
+                type: object
+                properties:
+                  company_id:
+                    type: integer
+                  name:
+                    type: string
+                  country:
+                    type: string
+                  region:
+                    type: string
+                  subregion:
+                    type: string
+                  equities:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        equity_id:
+                          type: integer
+                        bloomberg_ticker:
+                          type: string
+                        local_ticker:
+                          type: string
+                        ric:
+                          type: string
+                        isin:
+                          type: string
+                        cusip:
+                          type: string
+                        permid:
+                          type: string
+                        mic:
+                          type: string
+                        gics_sector:
+                          type: string
+                        gics_subsector:
+                          type: string
+            unmapped:
+              type: array
+              items:
+                type: object
+
+    CorporateActivityDetails:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        subtype:
+          type: string
+        when:
+          type: string
+          format: date-time
+        date_is_exact:
+          type: boolean
+        is_tentative:
+          type: boolean
+        is_estimated:
+          type: boolean
+        is_postponed:
+          type: boolean
+        is_cancelled:
+          type: boolean
+        raw_identifiers:
+          type: object
+          properties:
+            isin:
+              type: string
+            cusip:
+              type: string
+            comapny_name:
+              type: string
+            delisted:
+              type: boolean
+        event:
+          $ref: "#/components/schemas/EventCorporateActivity"
+        equity:
+          $ref: "#/components/schemas/Equity"
+        related_ids:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+          properties:
+            contact:
+              $ref: "#/components/schemas/ContactDetails"
+            speakers:
+              type: string
+            webcasts:
+              type: array
+              items:
+                type: object
+                properties:
+                  url:
+                    type: string
+                  description::
+                    type: string
+            regarding:
+              type: string
+            callDetails:
+              type: object
+              properties:
+                dialInNumber:
+                  type: string
+            localLanguage:
+              type: boolean
+            replayDetails:
+              type: object
+              properties:
+                date:
+                  type: string
+                  format: date-time
+                timeZone:
+                  type: string
+                dialInEnds:
+                  type: string
+                  format: date-time
+                webcastUrl:
+                  type: string
+            preRegistration:
+              type: boolean
+            preRegistrationUrl:
+              type: string
+        explaination:
+          type: string
+        audit:
+          type: array
+          items:
+            type: object
+            properties:
+              change_date:
+                type: string
+                format: date-time
+              change_type:  
+                type: string
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+
+    ContactDetails:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        telephone:
+          type: string
+
+    EventCorporateActivity:
+      type: object
+      properties:
+        event_id:
+          type: integer
+        event_title:
+          type: string
+        event_type: 
+          type: string
+        event_date:
+          type: string
+          format: date-time
+        has_unknown_time:
+          type: boolean
+        broadcase_url:
+          type: string
+        replay_url:     
+          type: string  
+        conference_number:
+          type: string
+        conference_pin:
+          type: string
+        slides_url:
+          type: string
+        slides_url_type:
+          type: string
+        press_url:
+          type: string
+        press_url_type:
+          type: string
+        transcription_status:
+          type: string
+        transcription_audio_url:
+          type: string
+        status:
+          type: string
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+
+    Equity:
+      type: object
+      properties:
+        equity_id:
+          type: integer
+        company_id:
+          type: integer
+        comapny_name:
+          type: string
+        local_ticker:
+          type: string
+        bloomberg_ticker:
+          type: string
+        ric:
+          type: string
+        permid:
+          type: string
+        isin:
+          type: string
+        cusip:
+          type: string
+        exchange_mic:
+          type: string
+
+    CorporateActivityAudits:
+      type: object
+      properties:
+        params:
+          type: object
+        count:
+          type: integer
+        audits:
+          type: array
+          items:
+            $ref: "#/components/schemas/CorporateActivityAuditItem"
+
+    CorporateActivityAuditItem:
+      type: object
+      properties:
+        corporate_activity_id:
+          type: string
+        change_date:
+          type: string
+          format: date-time
+        change_type:
+          type: string
+        corporate_activity:
+          $ref: "#/components/schemas/CorporateActivityDetails"
+
+    Equity2: 
+      type: object
+      properties:
+        equity_id:
+          type: integer
+        bloomberg_ticker:
+          type: string
+        name:
+          type: string
+        common_name:
+          type: string
+        ticker:
+          type: string
+        local_ticker:
+          type: string
+        mic:
+          type: string
+        isin:
+          type: string
+        permid:
+          type: string
+        sectoy_id:
+          type: integer
+        gics_sector:
+          type: string
+        subsector_id:
+          type: integer
+        gics_sub_sector:
+          type: string
+        primary_equity:
+          type: boolean
+        created:  
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        status:   
+          type: string
+        company_metadata:
+          type: object
+          properties:
+            company_id:
+              type: integer
+            company_name:
+              type: string
+            legal_name:
+              type: string
+            incorporated_country_code:
+              type: string
+            domiciled_country_code:
+              type: string
+            urls:
+              type: array
+              items:
+                type: object
+                properties:
+                  url:
+                    type: string
+                  url_type:
+                    type: string
+              
+    Pagination:
+      type: object
+      properties:
+        total_count:
+          type: integer
+        current_page:
+          type: integer
+        total_pages:
+          type: integer
+        page_size:
+          type: integer
+        
+    Sector:
+      type: object
+      properties:
+        sector_id:
+          type: integer
+        gics_code:
+          type: string
+        name:
+          type: string
+        subsectors:
+          type: array
+          items:
+            type: object
+            properties:
+              subsector_id:
+                type: integer
+              gics_code:
+                type: string
+              gics_industry_code: 
+                type: string
+              name:
+                type: string
+
+    Topics:
+      type: object
+      properties:
+        topic_id:
+          type: string
+        topic_name:
+          type: string
+
+    EquityTopics:
+      type: object
+      properties:
+        topic_id:
+          type: string
+        topic_name:
+          type: string
+        equity_count:
+          type: integer        
+
+    EventTopics:
+      type: object
+      properties:
+        topic_id:
+          type: string
+        topic_name:
+          type: string
+        event_count:
+          type: integer        
+
+    EquityByTopicId:
+      type: object
+      properties:
+        equity_id:
+          type: integer
+        local_ticker:
+          type: string
+        mic:
+          type: string
+        bloomberg_ticker:
+          type: string
+        isin:
+          type: string
+        gics_sector:
+          type: string
+        gics_sub_sector:
+          type: string
+
+    EventsByTopicId:
+      type: object
+      properties:
+        event_id:
+          type: integer
+        title:
+          type: string
+        event_type:
+          type: string
+        date:
+          type: string
+          format: date-time
+          example: "2024-10-31T23:59:59.999999"
+          pattern: '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}$'
+        equity:
+          type: object
+          properties:
+            equity_id:
+              type: integer
+            local_ticker:
+              type: string
+            bloomberg_ticker:
+              type: string
+            mic:
+              type: string
+            isin:
+              type: string
+            gics_sector:
+              type: string
+            gics_sub_sector:
+              type: string
+
+    Transcrippet:
+      type: object
+      properties:
+        trimmed_audio_url:
+          type: string
+          format: url
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

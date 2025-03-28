@@ -8,6 +8,7 @@ servers:
 security:
   - ApiKeyAuth: []
 paths:
+
   /dashboards/{dashboard_guid}/streams/{stream_guid}/matches:
     get:
       operationId: getMatch
@@ -18,13 +19,13 @@ paths:
           in: path
           required: true
           schema:
-            type: uuid
+            type: integer
           description: Returns match
         - name: stream_guid
           in: path
           required: true
           schema:
-            type: uuid
+            type: integer
           description: Returns match
         - name: start_date
           in: query
@@ -90,6 +91,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -97,6 +99,7 @@ components:
       in: header
       name: X-API-KEY
   schemas:
+
     Match: 
       type: object
       properties:
@@ -109,39 +112,42 @@ components:
         results:
           type: array
           items:
-            highlights:
-              type: array
-              items:
-                type: string
-            Event:
-              type: object
-              properties:
-                event_id:
-                  type: integer
-                event_type:
+            type: object
+            properties:
+              highlights:
+                type: array
+                items:
                   type: string
-                date:
-                  type: string
-                  format: date-time
-                title:
-                  type: string
-                equity:
-                  type: object
-                  properties:
-                    equity_id:
-                      type: integer
-                    ticker:
-                      type: string
-                    bloomberg_ticker:
-                      type: string
-                    mic:
-                      type: string
-                    isin:
-                      type: string
-                    gics_sector:
-                      type: string
-                    gics_sub_sector:
-                      type: string
+              Event:
+                type: object
+                properties:
+                  event_id:
+                    type: integer
+                  event_type:
+                    type: string
+                  date:
+                    type: string
+                    format: date-time
+                  title:
+                    type: string
+                  equity:
+                    type: object
+                    properties:
+                      equity_id:
+                        type: integer
+                      ticker:
+                        type: string
+                      bloomberg_ticker:
+                        type: string
+                      mic:
+                        type: string
+                      isin:
+                        type: string
+                      gics_sector:
+                        type: string
+                      gics_sub_sector:
+                        type: string
+
     Error:
       type: object
       required:

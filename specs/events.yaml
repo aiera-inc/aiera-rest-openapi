@@ -8,6 +8,7 @@ servers:
 security:
   - ApiKeyAuth: []
 paths:
+
   /events/audio/transcript/csv:
     get:
       security:
@@ -133,6 +134,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -252,6 +255,7 @@ components:
                     type: string
                   priority:
                     type: integer
+
     Error:
       type: object
       required:
