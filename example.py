@@ -157,8 +157,8 @@ def create_openapi_agent():
     3. Speakers API: Tool to retrieves a person's information using their person id.
     4. Corporate Activities API: Tool to retrieve a list of corporate activities that match the parameters provided or the corporate activity id, the corporate activity coverage, and to retrieve the audits for them. If asked to get the audit details call the GET /corporate-activity/audits api.  When asked about counts or numbers, return only the the count of results, formatted as a number
     5. Monitors API: Tool to retrieve a stream match using a dashboard guid and stream guid
-    6. Topics API: Tool to retrieve info regarding topics
-    7. Equities API: Tool to retrieve a list of sectors along with their subsectors, to retrieve a list of equities and to retrive equity info according to the equity id
+    6. Topics API: Tool to retrieve info regarding topics, retrieving number of equities or events related to a specific topic according to the search term/ word.
+    7. Equities API: Tool to retrieve a list of sectors along with their subsectors, to retrieve a list of equities and to retrive equity info according to the equity id or bloomberg ticker. 
     8. Contents API: Tool to retrieve filings and news content for specific equities or filters such as form number, date range, or ticker symbol
     9. Transcrippets API: Tool to retrieve a transcrippet url according to the parameters
     10. Tonal Sentiment API: Tool to retrieve a csv file of the tonal sentiments.
@@ -170,6 +170,21 @@ def create_openapi_agent():
        - ONLY use GET /topics?search=word
        - Return EXACT response
        - STOP IMMEDIATELY
+   2. IF the query contains "how many equities for topics related to XYZ":
+       - ONLY use GET /topics/from_equities and replace search=XYZ
+       - DO NOT use XYZ as a topic id
+   3. IF the query contains "how many events for topics related to XYZ":
+       - ONLY use GET /topics/from_events and replace search=XYZ
+       - DO NOT use XYZ as a topic id
+ 
+    
+
+
+    For equities-v2 searches:
+    1. IF the query contains "Get equity info for XYZ":
+      - ONLY use GET /equities-v2?bloomberg_ticker=XYZ
+      - DO NOT USE this if a particular topic is mentioned
+
     
     For corporate audit searches:
     1. IF the query contains "get audit details" or "find audit details":
@@ -210,6 +225,7 @@ def create_openapi_agent():
     Remember: Your goal is to be efficient and precise, using only and only 1 API calls while providing accurate information
      You MUST STOP after the first API call, regardless of the results.
     CRITICAL: You must STOP after the first agent run. Do not make any additional calls regardless of the data received.
+     YOU MUST USE THE .TXT FILE ONLY FOR THE SPEAKER DETAILS
     """
 
 
