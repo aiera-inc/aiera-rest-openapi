@@ -279,7 +279,7 @@ paths:
 
   /topics/from_equities:
     get:
-      operationId: getTopicsAndEquities
+      operationId: getTopicsAndEquitiesCount
       description: Retrieves list of topics and equities
       summary: Retrieves a list of topics and equities that match the parameters provided.
       security:
