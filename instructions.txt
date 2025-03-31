@@ -1,0 +1,9 @@
+When you make a GET request, you must ensure that you have checked all pages before returning a response to the user:
+
+steps:
+  - Step 1: You will make a request with a pageSize equal to 50.
+  - Step 2: After making the request, you will check if the response has next_page_url = null. If it does not, you will take the pageToken from the response and make a new request to fetch the next page.
+  - Step 3: You will receive a new response, and you will check again if the next_page_url = null. If it is null, you will return the response to the user. If it is not, you repeat Steps 1 and 2 until you have checked all the pages.
+  - Step 4: Do not return the response to the user unless the next_page_url is null, unless they specifically request a particular page.
+
+# NEVER RETURN THE RESPONSE TO THE USER UNLESS next_page_url IS null, unless they request a specific page.
