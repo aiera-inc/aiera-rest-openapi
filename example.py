@@ -39,7 +39,6 @@ def create_openapi_tools():
     equities_api_spec=load_openapi_spec('specs/equity.yaml')
     contents_api_spec=load_openapi_spec('specs/content.yaml')
     transcrippets_api_spec=load_openapi_spec('specs/transcrippets.yaml')
-    tonalSentiment_api_spec=load_openapi_spec('specs/tonalSentiments.yaml')
     calendar_api_spec=load_openapi_spec('specs/calendar.yaml')
 
     events_tool = Tool(
@@ -133,19 +132,13 @@ def create_openapi_tools():
         description="Tool to retrieve a transcrippet url according to the parameters"
     )
 
-    tonalSentiment_tool=Tool(
-        name="Tonal Sentiment API",
-        func=planner.create_openapi_agent(tonalSentiment_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
-        description="Tool to Export tonal sentiment to csv."
-    )
-
     summaries_tool= Tool(
         name="Summaries API",
         func=planner.create_openapi_agent(summaries_api_spec, requests_wrapper, llm, allow_dangerous_requests=True).invoke,
         description="Tool for retrieving the field summaries from events. Use this only when specifically asked for summaries based on event filter, event_id, and summary_type. When asked to get summaries for a specific bloomberg ticker within a given date range call /summaries with the parameters as enetered by the user"
     )
 
-    return[events_tool, calendars_tool, speaker_tool, corporate_activities_tool, monitors_tool, topics_tool, equities_tool, contents_tool, transcrippets_tool, tonalSentiment_tool, summaries_tool]
+    return[events_tool, calendars_tool, speaker_tool, corporate_activities_tool, monitors_tool, topics_tool, equities_tool, contents_tool, transcrippets_tool, summaries_tool]
 
 
 def create_openapi_agent():
