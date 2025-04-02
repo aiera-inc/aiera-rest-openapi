@@ -140,72 +140,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
-  /transcrippets:
-    get:
-        security:
-          - ApiKeyAuth: []
-        operationId: getEventTranscripts
-        description: Retrieves a transcrippet url.
-        summary: Retrieves a transcrippet url according to the parameters.
-        parameters:
-          - name: transcrippet_id
-            in: query
-            required: false
-            schema:
-              type: integer
-            description: ID of the transcrippet.
-          - name: event_id
-            in: query
-            required: false
-            schema:
-              type: integer
-            description: ID of the event.
-          - name: equity_id
-            in: query
-            required: false
-            schema:
-              type: integer
-            description: ID of the equity.
-          - name: speaker_id  
-            in: query
-            required: false
-            schema:
-              type: integer
-            description: ID of the speaker.
-          - name : transcript_item_id
-            in: query
-            required: false
-            schema:
-              type: integer
-            description: ID of the transcript item.
-          - name: created_start_date
-            in: query
-            required: false
-            schema:
-              type: string
-            description: Fetch events on or after this date (defaults to 2 weeks ago)
-          - name: created_end_date  
-            in: query
-            required: false
-            schema:
-              type: string
-            description: Fetch events on or before this date (defaults to 2 weeks from now)
-        responses:
-          "200":
-            description: Successfully retrieved the transcrippets
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: "#/components/schemas/Transcrippet"
-          "default":
-            description: unexpected error
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/Error"        
-
   /topics/{topic_id}:
     get:
       operationId: getEvent
@@ -2566,13 +2500,6 @@ components:
               type: string
             gics_sub_sector:
               type: string
-
-    Transcrippet:
-      type: object
-      properties:
-        trimmed_audio_url:
-          type: string
-          format: url
 
     Error:
       type: object
