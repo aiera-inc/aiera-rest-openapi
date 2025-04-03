@@ -41,6 +41,14 @@ python example.py
 The specification includes the following key endpoints:
 
 * /events: Retrieve information about events.
+* /calendar: Retrieve information about calendar events.
+* /corporate-activity: Retrieve corporate activity information.
+* /summaries: Retrive information about summaries of events.
+* /equities-v2: Retrieve sector and equity information.
+* /dashboards: Retrieve stream matches from a monitor configured in your Aiera desktop.
+* /content: Retrive news and filings information.
+* /topics: Retrive topics information.
+* /events-v2/person: Retrive information about speaker's name, titles, and events in which they spoke.
 
 ## Authentication
 To use the Aiera API, you'll need to obtain an API key. For more information about Aiera and its services, visit www.aiera.com.
