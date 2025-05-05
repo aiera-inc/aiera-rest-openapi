@@ -218,7 +218,7 @@ def create_openapi_agent():
     Remember: Your goal is to be efficient and precise, using only and only 1 API calls while providing accurate information
      You MUST STOP after the first API call, regardless of the results.
     CRITICAL: You must STOP after the first agent run. Do not make any additional calls regardless of the data received.
-     YOU MUST USE THE .TXT FILE ONLY FOR THE SPEAKER DETAILS
+     YOU MUST USE THE .TXT FILE ONLY FOR THE SPEAKER AND EVENT DETAILS
     """
 
 
