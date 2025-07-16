@@ -163,7 +163,34 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
- 
+  
+  /equities-v2/{equity_id}/summary:
+    get:
+      operationId: getEquitySummary
+      description: Retrieves a summary of an equity including basic information and events
+      summary: Retrieves detailed information about an equity including past and upcoming events
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: equity_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the equity or Bloomberg ticker with country code (e.g., AAPL:US)
+      responses:
+        "200":
+          description: A detailed summary of the equity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EquitySummary"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
 components:
   securitySchemes:
@@ -269,6 +296,266 @@ components:
               name:
                 type: string
 
+    EquitySummary:
+      type: object
+      properties:
+        equity_id:
+          type: integer
+          description: The unique identifier for the equity
+        name:
+          type: string
+          description: The full name of the equity
+        common_name:
+          type: string
+          description: The common name of the equity
+        local_ticker:
+          type: string
+          description: The local ticker symbol
+        mic:
+          type: string
+          description: Market Identifier Code
+        bloomberg_ticker:
+          type: string
+          description: The Bloomberg ticker symbol with country code
+        isin:
+          type: string
+          description: International Securities Identification Number
+        permid:
+          type: string
+          description: PermID of the equity
+        gics_sector:
+          type: string
+          description: GICS sector name
+        gics_sub_sector:
+          type: string
+          description: GICS sub-sector name
+        description:
+          type: string
+          description: Company description
+        company_url:
+          type: string
+          description: Company website URL
+        ceo_name:
+          type: string
+          description: Name of the CEO
+        country:
+          type: string
+          description: Country of the company
+        estimated_next_earnings:
+          type: string
+          format: date-time
+          nullable: true
+          description: Estimated date of next earnings release
+        created:
+          type: string
+          format: date-time
+          description: When the equity record was created
+        modified:
+          type: string
+          format: date-time
+          nullable: true
+          description: When the equity record was last modified
+        status:
+          type: string
+          description: Status of the equity
+        events:
+          type: object
+          description: Past and upcoming events for this equity
+          properties:
+            past:
+              type: array
+              description: Events that have already occurred
+              items:
+                $ref: "#/components/schemas/PastEvent"
+            upcoming:
+              type: array
+              description: Events that are scheduled for the future
+              items:
+                $ref: "#/components/schemas/UpcomingEvent"
+                
+    PastEvent:
+      type: object
+      properties:
+        event_id:
+          type: integer
+          description: Unique identifier for the event
+        title:
+          type: string
+          description: Title of the event
+        event_type:
+          type: string
+          description: Type of event (e.g., earnings, conference)
+        event_date:
+          type: string
+          format: date-time
+          description: Date and time of the event
+        fiscal_quarter:
+          type: string
+          nullable: true
+          description: Fiscal quarter related to the event
+        fiscal_year:
+          type: integer
+          nullable: true
+          description: Fiscal year related to the event
+        conference_number:
+          type: string
+          nullable: true
+          description: Conference call number
+        conference_number_alt:
+          type: string
+          nullable: true
+          description: Alternative conference call number
+        conference_pin:
+          type: string
+          nullable: true
+          description: Conference call PIN
+        broadcast_url:
+          type: string
+          nullable: true
+          description: URL for the broadcast
+        replay_url:
+          type: string
+          nullable: true
+          description: URL for the replay
+        transcription_status:
+          type: string
+          description: Status of the transcription
+        transcription_connected:
+          type: string
+          format: date-time
+          nullable: true
+          description: When transcription was connected
+        transcription_disconnected:
+          type: string
+          format: date-time
+          nullable: true
+          description: When transcription was disconnected
+        has_human_verified:
+          type: boolean
+          description: Whether the transcript has been human verified
+        has_live_transcript:
+          type: boolean
+          description: Whether a live transcript is available
+        has_audio:
+          type: boolean
+          description: Whether audio is available
+        has_press_release:
+          type: boolean
+          description: Whether a press release is available
+        has_slides:
+          type: boolean
+          description: Whether slides are available
+        duplicate_of:
+          type: integer
+          nullable: true
+          description: ID of the event this is a duplicate of
+        created:
+          type: string
+          format: date-time
+          description: When the event record was created
+        modified:
+          type: string
+          format: date-time
+          nullable: true
+          description: When the event record was last modified
+        price_data:
+          type: object
+          description: Price data related to the event
+          properties:
+            previous_day_close_price:
+              type: number
+              nullable: true
+              description: Closing price on the previous day
+            current_day_open_price:
+              type: number
+              nullable: true
+              description: Opening price on the day of the event
+            current_day_close_price:
+              type: number
+              nullable: true
+              description: Closing price on the day of the event
+            price_at_start:
+              type: number
+              nullable: true
+              description: Price at the start of the event
+            price_at_end:
+              type: number
+              nullable: true
+              description: Price at the end of the event
+            volume_at_start:
+              type: number
+              nullable: true
+              description: Volume at the start of the event
+            olume_at_end:
+              type: number
+              nullable: true
+              description: Volume at the end of the event
+        summary:
+          type: object
+          description: Summary of the event
+          properties:
+            title:
+              type: string
+              nullable: true
+              description: Title of the summary
+            content:
+              type: object
+              nullable: true
+              description: Content of the summary
+
+    UpcomingEvent:
+      type: object
+      properties:
+        event_id:
+          type: integer
+          description: Unique identifier for the event
+        title:
+          type: string
+          description: Title of the event
+        event_type:
+          type: string
+          description: Type of event (e.g., earnings, conference)
+        event_date:
+          type: string
+          format: date-time
+          description: Date and time of the event
+        fiscal_quarter:
+          type: string
+          nullable: true
+          description: Fiscal quarter related to the event
+        fiscal_year:
+          type: integer
+          nullable: true
+          description: Fiscal year related to the event
+        conference_number:
+          type: string
+          nullable: true
+          description: Conference call number
+        conference_number_alt:
+          type: string
+          nullable: true
+          description: Alternative conference call number
+        conference_pin:
+          type: string
+          nullable: true
+          description: Conference call PIN
+        broadcast_url:
+          type: string
+          nullable: true
+          description: URL for the broadcast
+        duplicate_of:
+          type: integer
+          nullable: true
+          description: ID of the event this is a duplicate of
+        created:
+          type: string
+          format: date-time
+          description: When the event record was created
+        modified:
+          type: string
+          format: date-time
+          nullable: true
+          description: When the event record was last modified
 
     Error:
       type: object
