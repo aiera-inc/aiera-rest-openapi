@@ -1,0 +1,139 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'Aiera MCP Server - Lambda deployment for Model Context Protocol server'
+
+Parameters:
+  AieraApiKey:
+    Type: String
+    Description: 'API key for Aiera financial data service'
+    NoEcho: true
+  
+  Stage:
+    Type: String
+    Default: 'dev'
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+    Description: 'Deployment stage'
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: python3.11
+    Environment:
+      Variables:
+        STAGE: !Ref Stage
+        AIERA_API_KEY: !Ref AieraApiKey
+
+Resources:
+  # Lambda function for MCP server
+  McpServerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'aiera-mcp-server-${Stage}'
+      CodeUri: .
+      Handler: lambda_handler.lambda_handler
+      Description: 'Aiera MCP Server for financial data access'
+      Environment:
+        Variables:
+          AIERA_API_KEY: !Ref AieraApiKey
+      Events:
+        ApiGateway:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+            RestApiId: !Ref ApiGateway
+        ApiGatewayRoot:
+          Type: Api
+          Properties:
+            Path: /
+            Method: ANY
+            RestApiId: !Ref ApiGateway
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/aiera-mcp-server-${Stage}:*'
+
+  # API Gateway for HTTP access
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub 'aiera-mcp-api-${Stage}'
+      StageName: !Ref Stage
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+      DefinitionBody:
+        swagger: '2.0'
+        info:
+          title: 'Aiera MCP Server API'
+          version: '1.0.0'
+        paths:
+          '/{proxy+}':
+            x-amazon-apigateway-any-method:
+              produces:
+                - application/json
+              parameters:
+                - name: proxy
+                  in: path
+                  required: true
+                  type: string
+              responses: {}
+              x-amazon-apigateway-integration:
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${McpServerFunction.Arn}/invocations'
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+          '/':
+            x-amazon-apigateway-any-method:
+              produces:
+                - application/json
+              responses: {}
+              x-amazon-apigateway-integration:
+                uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${McpServerFunction.Arn}/invocations'
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+
+  # Lambda permission for API Gateway
+  ApiGatewayInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref McpServerFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGateway}/*/*'
+
+  # CloudWatch Log Group
+  McpServerLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/aiera-mcp-server-${Stage}'
+      RetentionInDays: 14
+
+Outputs:
+  ApiGatewayUrl:
+    Description: 'API Gateway endpoint URL'
+    Value: !Sub 'https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${Stage}'
+    Export:
+      Name: !Sub '${AWS::StackName}-ApiGatewayUrl'
+  
+  McpServerUrl:
+    Description: 'MCP Server endpoint URL for SSE transport'
+    Value: !Sub 'https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${Stage}/sse'
+    Export:
+      Name: !Sub '${AWS::StackName}-McpServerUrl'
+  
+  FunctionName:
+    Description: 'Lambda function name'
+    Value: !Ref McpServerFunction
+    Export:
+      Name: !Sub '${AWS::StackName}-FunctionName'
