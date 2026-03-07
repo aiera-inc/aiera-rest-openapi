@@ -138,7 +138,7 @@ Once ingestion runs, you'll see in OMD:
 
 1. **BETA status** — The REST connector is still in beta. Expect rough edges, especially around how it handles complex OpenAPI features (polymorphism, oneOf, etc.)
 
-2. **Spec title mismatch** — The `unified.yaml` currently has `title: Aiera Calendars API` which is misleading since it covers all endpoints, not just calendars. Consider updating this to `Aiera REST API` before ingesting.
+2. ~~**Spec title mismatch**~~ — **Resolved.** The spec title was updated from `Aiera Calendars API` to `Aiera REST API`.
 
 3. **OpenAPI 3.1.0 compatibility** — The spec uses OpenAPI 3.1.0. If the OMD connector has issues parsing it, you may need to downgrade to 3.0.3 (the differences are minor but some parsers are picky).
 
