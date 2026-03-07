@@ -61,6 +61,21 @@ python -c "import yaml, json, sys; json.dump(yaml.safe_load(open('specs/unified.
 
 This is **not** your Aiera API key. This is only needed if the URL where the spec is hosted requires authentication to access (e.g., a private GitHub raw URL). If the spec is publicly accessible or on an internal network the OMD instance can reach, you can leave this blank.
 
+**For private GitHub repos:** You'll need a GitHub personal access token (PAT) since the OMD instance can't access raw file URLs without authentication. The raw URL format is:
+
+```text
+https://raw.githubusercontent.com/aiera-inc/aiera-rest-openapi/main/specs/unified.yaml
+```
+
+Two PAT options:
+
+| Type                                | Scope                              | Notes                                             |
+| ----------------------------------- | ---------------------------------- | ------------------------------------------------- |
+| **Fine-grained PAT** (recommended)  | `Contents: Read` on this repo only | More secure, least-privilege                      |
+| **Classic PAT**                     | `repo`                             | Broader access than needed, but simpler to set up |
+
+Paste the PAT into the **Token** field in the OMD connector configuration. OMD sends it as a bearer token when fetching the spec.
+
 Don't confuse this with:
 - **Aiera API key** — used by consumers calling the actual API
 - **OMD auth** — your login to the OpenMetadata platform itself
