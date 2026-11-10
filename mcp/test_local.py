@@ -65,8 +65,6 @@ async def test_server():
             "get_person_info",
             # Monitor API
             "get_dashboard_stream_matches",
-            # Tonal Sentiments API
-            "get_tonal_sentiments",
             # Transcrippets API
             "get_transcrippets"
         ]

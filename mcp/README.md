@@ -15,7 +15,6 @@ This MCP server provides a standardized interface for AI applications to access 
 - **Topics**: Categorized financial topics and themes with equity/event associations
 - **Speakers**: Information about executives and speakers from events
 - **Monitor**: Dashboard stream matches and alerts with advanced filtering
-- **Tonal Sentiments**: Sentiment analysis data export capabilities
 - **Transcrippets**: Transcript snippets and metadata access
 
 ## Features
@@ -129,9 +128,6 @@ All requests require the `AIERA_API_KEY` environment variable to be set. The ser
 
 #### Monitor API
 - `get_dashboard_stream_matches(dashboard_guid, stream_guid, start_date, end_date, linguistics?, collapse?, collapse_size?, next_page_token?, from_index?, size?)` - Get dashboard matches
-
-#### Tonal Sentiments API
-- `get_tonal_sentiments(bloomberg_ticker?)` - Export tonal sentiment data to CSV
 
 #### Transcrippets API
 - `get_transcrippets(transcrippet_id?, event_id?, equity_id?, speaker_id?, transcript_item_id?, created_start_date?, created_end_date?)` - Get transcrippet URLs and metadata

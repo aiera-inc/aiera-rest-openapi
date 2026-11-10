@@ -867,37 +867,6 @@ async def get_dashboard_stream_matches(
         api_key, params=params
     )
 
-# Tonal Sentiments API Tools
-@mcp.tool()
-async def get_tonal_sentiments(
-    bloomberg_ticker: Optional[str] = None
-) -> str:
-    """Export tonal sentiment data to CSV format."""
-    ctx = mcp.get_context()
-    client = ctx.request_context.lifespan_context["http_client"]
-    api_key = os.getenv("AIERA_API_KEY")
-    
-    if not api_key:
-        raise ValueError("AIERA_API_KEY environment variable is required")
-    
-    params = {}
-    if bloomberg_ticker:
-        params["bloomberg_ticker"] = bloomberg_ticker
-    
-    headers = DEFAULT_HEADERS.copy()
-    headers["X-API-KEY"] = api_key
-    
-    response = await client.get(
-        f"{AIERA_BASE_URL}/events-v2/tonal/export/csv",
-        params=params,
-        headers=headers
-    )
-    
-    if response.status_code != 200:
-        raise Exception(f"Failed to retrieve tonal sentiments: {response.status_code}")
-    
-    return response.text
-
 # Transcrippets API Tools
 @mcp.tool()
 async def get_transcrippets(
@@ -992,9 +961,6 @@ def get_api_documentation() -> str:
     
     ### Monitor API
     - get_dashboard_stream_matches: Get dashboard stream matches with advanced filtering
-    
-    ### Tonal Sentiments API
-    - get_tonal_sentiments: Export tonal sentiment data to CSV
     
     ### Transcrippets API
     - get_transcrippets: Retrieve transcrippet URLs and metadata

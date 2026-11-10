@@ -69,8 +69,6 @@ components:
             linguistics:
               type: object
               properties:
-                tonal:
-                  type: number
                 topics:
                   type: array
                   items:
@@ -115,8 +113,6 @@ components:
             linguistics:
               type: object
               properties:
-                tonal:
-                  type: number
                 topics:
                   type: array
                   items:
