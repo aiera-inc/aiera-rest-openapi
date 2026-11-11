@@ -154,8 +154,7 @@ def create_openapi_agent():
     7. Equities API: Tool to retrieve a list of sectors along with their subsectors, to retrieve a list of equities and to retrive equity info according to the equity id or bloomberg ticker. 
     8. Contents API: Tool to retrieve filings and news content for specific equities or filters such as form number, date range, or ticker symbol
     9. Transcrippets API: Tool to retrieve a transcrippet url according to the parameters
-    10. Tonal Sentiment API: Tool to retrieve a csv file of the tonal sentiments.
-    11. Summaries API: Tool for retrieving the summaries attribute of an event. Use this only when specifically asked for summaries based on event filter, event_id, and summary_type. When asked to get summaries for a specific bloomberg ticker within a given date range call /summaries with the parameters as enetered by the user
+    10. Summaries API: Tool for retrieving the summaries attribute of an event. Use this only when specifically asked for summaries based on event filter, event_id, and summary_type. When asked to get summaries for a specific bloomberg ticker within a given date range call /summaries with the parameters as enetered by the user
     Follow these strict guidelines:
     For topic searches:
 
